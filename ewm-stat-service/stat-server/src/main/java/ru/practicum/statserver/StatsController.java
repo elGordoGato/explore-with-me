@@ -29,7 +29,7 @@ public class StatsController {
     @GetMapping("/stats")
     public List<ViewStats> getStats(@RequestParam String start,
                                     @RequestParam String end,
-                                    @RequestParam List<String> uris,
+                                    @RequestParam(required = false) List<String> uris,
                                     @RequestParam(defaultValue = "false") boolean unique) {
         log.debug("Received request to get stats from {} to {} for uris: {} for " +
                         (unique ? "" : "not") + " unique ip",
@@ -49,9 +49,9 @@ public class StatsController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
-    public void saveHit(@RequestBody EndpointHit hit) {
-        log.debug("Received request to save {} to stats", hit);
-        //EntityEndpointHit entityEndpointHit = new EntityEndpointHit(hit);
+    public void saveHit(@RequestBody EndpointHit hitDto) {
+        log.debug("Received request to save {} to stats", hitDto);
+        HitEntity hit = new HitEntity(hitDto);
         service.saveHit(hit);
     }
 }

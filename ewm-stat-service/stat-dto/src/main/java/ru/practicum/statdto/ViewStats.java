@@ -1,14 +1,19 @@
 package ru.practicum.statdto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class ViewStats {
-    private final String app;     //Название сервиса example: ewm-main-service
+    private String app;     //Название сервиса example: ewm-main-service
 
 
-    private final String uri;   //URI сервиса example: /events/1
+    private String uri;   //URI сервиса example: /events/1
 
 
-    private final Long hits; //Количество просмотров   example: 6
+    private Long hits; //Количество просмотров   example: 6
 
     public ViewStats(String app, String uri, Long hits) {
         this.app = app;
