@@ -2,7 +2,7 @@ version: '3.1'
 services:
   stats-server:
     build: ./ewm-stat-service/stat-server
-    image: ewm-stat-server
+    image: ewm-stat-service
     container_name: stat-server
     ports:
       - "9090:9090"
@@ -29,6 +29,8 @@ services:
 
   ewm-service:
     build: ./ewm-main-service/main-server
+    image: ewm-main-service
+    container_name: main-server
     ports:
       - "8080:8080"
     environment:
@@ -36,5 +38,10 @@ services:
 
   ewm-db:
     image: postgres:14-alpine
+    container_name: maindb
     ports:
       - "9091:9091"
+    environment:
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
