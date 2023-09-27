@@ -4,8 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>main-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Main Server</name>
 
     <parent>
         <groupId>ru.practicum</groupId>
@@ -22,11 +20,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
@@ -52,7 +45,6 @@
             <artifactId>stat-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>ru.practicum</groupId>
             <artifactId>stat-client</artifactId>

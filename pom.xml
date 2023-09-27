@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>    <groupId>ru.practicum</groupId>
     <name>Explore With Me</name>
-    <groupId>ru.practicum</groupId>
     <artifactId>explore-with-me</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -46,7 +45,6 @@
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
@@ -73,7 +71,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
@@ -90,7 +87,6 @@
                         </execution>
                     </executions>
                 </plugin>
-
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -162,7 +158,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
     <profiles>
         <profile>
             <id>check</id>
