@@ -27,7 +27,7 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
-  ewm-service:
+  main-service:
     build: ./ewm-main-service/main-server
     image: ewm-main-service
     container_name: main-server
@@ -36,7 +36,7 @@ services:
     environment:
       - STAT_SERVER_URL=http://server:9090
 
-  ewm-db:
+  main-db:
     image: postgres:14-alpine
     container_name: maindb
     ports:
