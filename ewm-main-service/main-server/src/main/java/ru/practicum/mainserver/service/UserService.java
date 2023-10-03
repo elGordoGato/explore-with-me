@@ -1,16 +1,15 @@
 package ru.practicum.mainserver.service;
 
-import org.springframework.data.domain.Pageable;
-import ru.practicum.mainserver.api.user.dto.NewUserRequest;
 import ru.practicum.mainserver.api.user.dto.UserDto;
+import ru.practicum.mainserver.repository.entity.UserEntity;
 
 import java.util.List;
 
 
 public interface UserService {
-    List<UserDto> getUsers(List<Long> ids, Pageable page);
-
-    UserDto registerUser(NewUserRequest body);
+    UserEntity registerUser(UserDto body);
 
     void deleteUser(Long userId);
+
+    List<UserEntity> getUsers(List<Long> ids, Integer from, Integer size);
 }

@@ -1,6 +1,7 @@
 package ru.practicum.mainserver.repository.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.practicum.mainserver.api.event.utils.StateEnum;
@@ -10,9 +11,13 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "event")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
@@ -22,24 +27,20 @@ public class EventEntity {
     @ToString.Exclude
     private LocationEntity location;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false)
     private String annotation;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     private CategoryEntity category;
-
-    private Instant createdOn = Instant.now();
+    private final Instant createdOn = Instant.now();
 
     @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
-    private String eventDate;
+    private Instant eventDate;
 
     private boolean paid;
 
@@ -57,6 +58,7 @@ public class EventEntity {
     private StateEnum state = StateEnum.PENDING;
 
     private String title;
+
 
 
     @Override

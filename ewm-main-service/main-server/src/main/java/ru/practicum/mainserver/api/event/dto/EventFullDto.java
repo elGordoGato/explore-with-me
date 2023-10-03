@@ -1,28 +1,32 @@
 package ru.practicum.mainserver.api.event.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 import ru.practicum.mainserver.api.category.CategoryDto;
 import ru.practicum.mainserver.api.event.utils.StateEnum;
 import ru.practicum.mainserver.api.user.dto.UserShortDto;
+
+import java.time.LocalDateTime;
 
 /**
  * EventFullDto
  */
 @Builder
+@Getter
 public class EventFullDto {
+    private final Long id;
     private final String annotation;
 
     private final CategoryDto category = null;
 
     private final Long confirmedRequests = null;
 
-    private final String createdOn = null;
+    private final LocalDateTime createdOn = null;
 
     private final String description = null;
 
-    private final String eventDate = null;
+    private final LocalDateTime eventDate = null;
 
-    private final Long id = null;
 
     private final UserShortDto initiator = null;
 
@@ -35,7 +39,9 @@ public class EventFullDto {
     private final String publishedOn = null;
 
     private final Boolean requestModeration = true;
+
     private final String title = null;
+
     private final Long views = null;
     /**
      * Список состояний жизненного цикла события

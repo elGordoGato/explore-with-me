@@ -34,7 +34,8 @@ public class AdminCompilationController {
         log.debug("Received request from admin to update compilation with id: {}, new compilation: {}",
                 compId, body);
         List<EventEntity> eventEntities = null;                                                      //TODO event service
-        return compilationMapper.dtoFromEntity(compilationService.update(compId, body, eventEntities));
+        return compilationMapper.dtoFromEntity(
+                compilationService.update(compId, body, eventEntities));
     }
 
     @DeleteMapping("/{compId}")

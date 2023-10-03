@@ -2,6 +2,7 @@ package ru.practicum.mainserver.service;
 
 import ru.practicum.mainserver.api.event.dto.*;
 import ru.practicum.mainserver.api.event.utils.EventParameters;
+import ru.practicum.mainserver.repository.entity.EventEntity;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface EventService {
 
     List<EventShortDto> getPublic(EventParameters eventParameters, Integer from, Integer size);
 
-    List<EventFullDto> getByAdmin(EventParameters parameters, Integer from, Integer size);
+    List<EventEntity> getByAdmin(EventParameters parameters, Integer from, Integer size);
 
     EventFullDto updateByAdmin(Long eventId, UpdateEventAdminRequest body);
 

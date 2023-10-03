@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainserver.api.event.dto.EventFullDto;
+import ru.practicum.mainserver.api.event.dto.EventMapper;
 import ru.practicum.mainserver.api.event.dto.UpdateEventAdminRequest;
 import ru.practicum.mainserver.api.event.utils.EventParameters;
+import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.service.EventService;
 
 import javax.validation.Valid;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminEventController {
     private final EventService eventService;
+    private final EventMapper eventMapper;
 
     @GetMapping
     public List<EventFullDto> getEvents(@RequestParam(value = "users", required = false) List<Long> users,
@@ -36,7 +39,8 @@ public class AdminEventController {
                 .rangeEnd(rangeEnd)
                 .build();
         log.debug("Received request from admin to get events with parameters: {}", parameters);
-        return eventService.getByAdmin(parameters, from, size);
+        List<EventEntity> foundEvents = eventService.getByAdmin(parameters, from, size);
+        return eventMapper.dtoFromEntityList(foundEvents);
     }
 
     @PatchMapping("/{eventId}")

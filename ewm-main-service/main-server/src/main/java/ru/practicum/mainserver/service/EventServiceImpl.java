@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mainserver.api.event.dto.*;
 import ru.practicum.mainserver.api.event.utils.EventParameters;
+import ru.practicum.mainserver.repository.entity.EventEntity;
 
 import java.util.List;
 
@@ -38,7 +39,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getByAdmin(EventParameters parameters, Integer from, Integer size) {
+    public List<EventEntity> getByAdmin(EventParameters parameters, Integer from, Integer size) {
+
+
         return null;
     }
 

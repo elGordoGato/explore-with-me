@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class RequestEntity {
     @ManyToOne
     @ToString.Exclude
-    private UserEntity user;
+    private CategoryEntity user;
     @ManyToOne
     @ToString.Exclude
     private EventEntity event;
