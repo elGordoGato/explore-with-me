@@ -9,6 +9,7 @@ import java.util.List;
 @Table(name = "compilation")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompilationEntity {
@@ -16,12 +17,11 @@ public class CompilationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
     private List<EventEntity> events;
 
     private boolean pinned;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 }

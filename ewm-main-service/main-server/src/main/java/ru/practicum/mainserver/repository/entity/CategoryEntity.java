@@ -18,16 +18,15 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nclass CategoryEntity {\n");
-        sb.append("    id: ").append(id).append("\n");
-        sb.append("    name: ").append(name).append("\n");
-        sb.append("}");
-        return sb.toString();
+        String sb = "\nclass CategoryEntity {\n" +
+                "    id: " + id + "\n" +
+                "    name: " + name + "\n" +
+                "}";
+        return sb;
     }
 }

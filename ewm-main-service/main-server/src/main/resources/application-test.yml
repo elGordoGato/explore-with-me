@@ -20,6 +20,8 @@ spring:
     username: root
     password: root
   jpa:
-    show-sql: false
+    ##show-sql: true
     hibernate:
       ddl-auto: create
+STAT_SERVER_URL:
+  http://localhost:9090

@@ -5,6 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -13,15 +14,12 @@ import ru.practicum.statdto.EndpointHit;
 import java.util.List;
 import java.util.Map;
 
+
 public class StatClient {
     protected final RestTemplate rest;
 
-    public StatClient(@Value("${STAT_SERVER_URL}") String serverUrl, RestTemplateBuilder builder) {
-        this.rest =
-                builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build();
+    public StatClient(RestTemplate rest) {
+        this.rest = rest;
     }
 
     private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {

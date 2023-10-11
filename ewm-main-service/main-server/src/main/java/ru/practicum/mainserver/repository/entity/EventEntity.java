@@ -3,48 +3,68 @@ package ru.practicum.mainserver.repository.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import ru.practicum.mainserver.api.event.utils.StateEnum;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "event")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(
+        name = "full-event",
+        attributeNodes = {
+                @NamedAttributeNode("initiator"),
+                @NamedAttributeNode("category"),
+                @NamedAttributeNode("location"),
+        }
+
+)
+@NamedEntityGraph(
+        name = "short-event",
+        attributeNodes = {
+                @NamedAttributeNode("initiator"),
+                @NamedAttributeNode("category"),
+        }
+)
 public class EventEntity {
+    private final Instant createdOn = Instant.now();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
     private UserEntity initiator;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
-    private LocationEntity location;
+    private CategoryEntity category;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String annotation;
 
+    @Column(nullable = false, length = 120, unique = true)
+    private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
-    private CategoryEntity category;
-    private final Instant createdOn = Instant.now();
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 7000)
     private String description;
 
     @Column(nullable = false)
     private Instant eventDate;
 
-    private boolean paid;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private LocationEntity location;
 
-    private int participantLimit = 0;
+    private int participantLimit;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<RequestEntity> requestEntityList;
+
+    private boolean paid;
 
     private Instant publishedOn = null;
 
@@ -55,30 +75,28 @@ public class EventEntity {
      */
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private StateEnum state = StateEnum.PENDING;
-
-    private String title;
-
-
+    private StateEnum state;
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class EventFullDto {\n");
 
-        sb.append("    annotation: ").append(toIndentedString(annotation)).append("\n");
-        sb.append("    createdOn: ").append(toIndentedString(createdOn)).append("\n");
-        sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    eventDate: ").append(toIndentedString(eventDate)).append("\n");
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    paid: ").append(toIndentedString(paid)).append("\n");
-        sb.append("    participantLimit: ").append(toIndentedString(participantLimit)).append("\n");
-        sb.append("    publishedOn: ").append(toIndentedString(publishedOn)).append("\n");
-        sb.append("    requestModeration: ").append(toIndentedString(requestModeration)).append("\n");
-        sb.append("    state: ").append(toIndentedString(state)).append("\n");
-        sb.append("    title: ").append(toIndentedString(title)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        String sb = "\nclass EventEntity {\n" +
+                "    id: " + toIndentedString(id) + "\n" +
+                "    initiator: " + toIndentedString(initiator) + "\n" +
+                "    category: " + toIndentedString(category) + "\n" +
+                "    annotation: " + toIndentedString(annotation) + "\n" +
+                "    title: " + toIndentedString(title) + "\n" +
+                "    description: " + toIndentedString(description) + "\n" +
+                "    eventDate: " + toIndentedString(eventDate) + "\n" +
+                "    location: " + toIndentedString(location) + "\n" +
+                "    participantLimit: " + toIndentedString(participantLimit) + "\n" +
+                "    paid: " + toIndentedString(paid) + "\n" +
+                "    publishedOn: " + toIndentedString(publishedOn) + "\n" +
+                "    requestModeration: " + toIndentedString(requestModeration) + "\n" +
+                "    createdOn: " + toIndentedString(createdOn) + "\n" +
+                "    state: " + toIndentedString(state) + "\n" +
+                "}";
+        return sb;
     }
 
     /**

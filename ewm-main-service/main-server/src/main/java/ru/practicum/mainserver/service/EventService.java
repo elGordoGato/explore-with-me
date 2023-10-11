@@ -1,26 +1,34 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.event.dto.*;
-import ru.practicum.mainserver.api.event.utils.EventParameters;
+import ru.practicum.mainserver.api.dao.dto.InputDto;
+import ru.practicum.mainserver.api.utils.EventParameters;
 import ru.practicum.mainserver.repository.entity.EventEntity;
+import ru.practicum.mainserver.repository.entity.LocationEntity;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface EventService {
-    EventFullDto getByUser(Long userId, Long eventId);
+    EventEntity getShortByInitiator(Long userId, Long eventId);
 
-    List<EventShortDto> getByUser(Long userId, Integer from, Integer size);
+    List<EventEntity> getShortsByInitiator(Long userId, Integer from, Integer size);
 
-    EventFullDto addByUser(Long userId, NewEventDto body);
+    EventEntity addNew(EventEntity body);
 
-    EventRequestStatusUpdateResult updateByUser(Long userId, Long eventId, EventRequestStatusUpdateRequest body);
+    EventEntity updateByUser(Long userId, Long eventId, InputDto body, LocationEntity location);
 
-    List<EventShortDto> getPublic(EventParameters eventParameters, Integer from, Integer size);
+    EventEntity updateByAdmin(Long eventId, InputDto body, LocationEntity newLocation);
 
-    List<EventEntity> getByAdmin(EventParameters parameters, Integer from, Integer size);
+    List<Long> getIdsByParams(EventParameters parameters);
 
-    EventFullDto updateByAdmin(Long eventId, UpdateEventAdminRequest body);
+    List<EventEntity> getShortSortedByViews(Map<Long, Long> viewsMap, Integer from, Integer size);
 
-    EventFullDto getPublic(Long id);
+    List<EventEntity> getFullByParamsSortedById(EventParameters parameters, Integer from, Integer size);
+
+    List<EventEntity> getShortByParamsSortedByEventDate(EventParameters eventParameters, Integer from, Integer size);
+
+    EventEntity getPublic(Long id);
+
+    List<EventEntity> getByIds(List<Long> eventIds);
 }

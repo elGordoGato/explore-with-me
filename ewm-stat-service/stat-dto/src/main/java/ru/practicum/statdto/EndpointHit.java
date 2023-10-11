@@ -1,6 +1,7 @@
 package ru.practicum.statdto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 
 @Data
+@Builder
 public class EndpointHit {
     private int id;  //Идентификатор записи
 
@@ -21,6 +23,5 @@ public class EndpointHit {
     private String ip;  //IP-адрес пользователя, осуществившего запрос
 
     @NotBlank
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;  //Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
+    private String timestamp;  //Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
 }

@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.compilation.CompilationDto;
+import ru.practicum.mainserver.api.dao.dto.CompilationDto;
 import ru.practicum.mainserver.repository.entity.CompilationEntity;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 

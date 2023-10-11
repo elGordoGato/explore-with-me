@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,22 +16,21 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nclass UserEntity {\n");
 
-        sb.append("    id: ").append(id).append("\n");
-        sb.append("    name: ").append(name).append("\n");
-        sb.append("    email: ").append(email).append("\n");
-        sb.append("}");
-        return sb.toString();
+        String sb = "\nclass UserEntity {\n" +
+                "    id: " + id + "\n" +
+                "    name: " + name + "\n" +
+                "    email: " + email + "\n" +
+                "}";
+        return sb;
     }
 
 }

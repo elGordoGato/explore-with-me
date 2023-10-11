@@ -1,20 +1,26 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.event.dto.EventFullDto;
-import ru.practicum.mainserver.api.event.dto.UpdateEventUserRequest;
-import ru.practicum.mainserver.api.request.ParticipationRequestDto;
+import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.repository.entity.EventEntity;
+import ru.practicum.mainserver.repository.entity.RequestEntity;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface RequestService {
-    List<ParticipationRequestDto> getUserRequests(Long userId);
+    List<RequestEntity> getUserRequests(Long userId);
 
-    ParticipationRequestDto addParticipationRequest(Long userId, Long eventId);
+    RequestEntity addParticipationRequest(RequestEntity newRequest);
 
-    ParticipationRequestDto cancelRequest(Long userId, Long requestId);
+    RequestEntity cancelRequest(Long userId, Long requestId);
 
-    EventFullDto updateForEvent(Long userId, Long eventId, UpdateEventUserRequest body);
+    List<RequestEntity> getByEvent(Long eventId, Long userId);
 
-    List<ParticipationRequestDto> getByEvent(Long userId, Long eventId);
+    Map<Long, Long> getConfirmedRequestForEvents(List<Long> eventIds);
+
+    Long getConfirmedRequestForEvent(Long eventId);
+
+
+    Map<String, List<RequestEntity>> updateRequestsByInitiator(Long userId, EventEntity eventId, List<Long> requestsId, StatusEnum newStatus);
 }
