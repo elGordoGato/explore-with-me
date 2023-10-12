@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Краткая информация о событии
@@ -29,6 +31,7 @@ public class EventShortDto {
     private LocalDateTime eventDate;
 
     @JsonProperty("id")
+    @NotNull
     private Long id;
 
     @JsonProperty("initiator")
@@ -45,6 +48,19 @@ public class EventShortDto {
 
     public EventShortDto(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventShortDto)) return false;
+        EventShortDto that = (EventShortDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

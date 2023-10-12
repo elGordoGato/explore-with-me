@@ -2,19 +2,18 @@ package ru.practicum.mainserver.api.utils;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.validation.annotation.Validated;
-import ru.practicum.mainserver.repository.entity.StateEnum;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 
 @Builder
 @Getter
+@Setter
 public class EventParameters {
     private final String text;
     private final List<Long> users;
-    private final List<StateEnum> states;
+    private final List<EventStateEnum> states;
     private final List<Long> categories;
     private final Boolean paid;
     private final Instant rangeStart;

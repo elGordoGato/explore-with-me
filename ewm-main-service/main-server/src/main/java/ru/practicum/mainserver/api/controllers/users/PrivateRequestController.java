@@ -42,7 +42,7 @@ public class PrivateRequestController {
         log.debug("Received request to create participation request in event with id: {} from user with id: {}",
                 eventId, userId);
         UserEntity requester = userService.getById(userId);
-        EventEntity event = eventService.getPublic(eventId);
+        EventEntity event = eventService.getByID(eventId);
         RequestEntity newRequest = requestMapper.entityFromDto(requester, event);
         RequestEntity addedRequest = requestService.addParticipationRequest(newRequest);
         return requestMapper.dtoFromEntity(addedRequest);

@@ -6,19 +6,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.mainserver.api.utils.validation.*;
+import ru.practicum.mainserver.api.utils.validation.FutureIn2Hours;
+import ru.practicum.mainserver.api.utils.validation.Marker;
+import ru.practicum.mainserver.api.utils.validation.StateByAdmin;
+import ru.practicum.mainserver.api.utils.validation.StateByUser;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Новое событие
  */
 @Getter
 @Validated
-public class InputDto {
+public class InputEventDto {
     @JsonProperty("annotation")
     @Size(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, min = 20, max = 2000)
     @NotNull(groups = {Marker.OnCreate.class})
@@ -59,12 +64,17 @@ public class InputDto {
     private Boolean requestModeration;
 
     @JsonProperty("stateAction")
-    @NotNull(groups = Marker.OnUpdate.class)
-    @StateByUser(groups = StateUserValidator.class)
-    @StateByAdmin(groups = StateAdminValidator.class)
+    @StateByUser(groups = StateByUser.class)
+    @StateByAdmin(groups = StateByAdmin.class)
     private StateActionEnum stateAction;
 
-
+    @AssertTrue(groups = StateByAdmin.class)
+    private boolean isDateIn1Hour() {
+        return Optional.ofNullable(eventDate)
+                .map(date ->
+                        date.isAfter(LocalDateTime.now().plusHours(1)))
+                .orElse(true);
+    }
 
     @Override
     public String toString() {

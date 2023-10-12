@@ -1,78 +1,54 @@
 package ru.practicum.statclient;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.statdto.EndpointHit;
+import ru.practicum.statdto.ViewStats;
 
 import java.util.List;
 import java.util.Map;
 
 
+@Service
 public class StatClient {
-    protected final RestTemplate rest;
+    private final RestTemplate rest;
 
-    public StatClient(RestTemplate rest) {
-        this.rest = rest;
+    @Autowired
+    public StatClient(@Value("${STAT_SERVER_URL}") String serverUrl, RestTemplateBuilder builder) {
+        this.rest =
+                builder
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .build();
     }
 
-    private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response;
-        }
-
-        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-
-        if (response.hasBody()) {
-            return responseBuilder.body(response.getBody());
-        }
-
-        return responseBuilder.build();
+    public void saveHit(EndpointHit hitDto) {
+        HttpEntity<EndpointHit> requestEntity = new HttpEntity<>(hitDto, defaultHeaders());
+        rest.postForLocation("/hit", requestEntity, String.class);
     }
 
-    public ResponseEntity<Object> saveHit(EndpointHit hitDto) {
-        return makeAndSendRequest(HttpMethod.POST, "/hit", null, hitDto);
-    }
-
-    public ResponseEntity<Object> getViewStats(String start, String end, List<String> uris, boolean unique) {
+    public List<ViewStats> getViewStats(String start, String end, String uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
                 "uris", uris,
                 "unique", unique
         );
-        return makeAndSendRequest(
-                HttpMethod.GET,
-                "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
-                parameters,
-                null);
-    }
-
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method,
-                                                          String path,
-                                                          @Nullable Map<String, Object> parameters,
-                                                          @Nullable T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
-
-        ResponseEntity<Object> ewmStatServerResponse;
-        try {
-            if (parameters != null) {
-                ewmStatServerResponse = rest
-                        .exchange(path, method, requestEntity, Object.class, parameters);
-            } else {
-                ewmStatServerResponse = rest
-                        .exchange(path, method, requestEntity, Object.class);
-            }
-        } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
-        }
-        return prepareGatewayResponse(ewmStatServerResponse);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, defaultHeaders());
+        ResponseEntity<List<ViewStats>> response = rest
+                .exchange("/stats?start={start}&end={end}&uris={uris}&unique={unique}",
+                        HttpMethod.GET,
+                        requestEntity,
+                        new ParameterizedTypeReference<List<ViewStats>>() {
+                        }, parameters);
+        return response.getBody();
     }
 
     private HttpHeaders defaultHeaders() {

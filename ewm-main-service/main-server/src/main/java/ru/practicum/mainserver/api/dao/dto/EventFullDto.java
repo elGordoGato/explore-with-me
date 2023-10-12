@@ -1,10 +1,9 @@
 package ru.practicum.mainserver.api.dao.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
-import ru.practicum.mainserver.repository.entity.StateEnum;
+import ru.practicum.mainserver.api.utils.EventStateEnum;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +18,7 @@ public class EventFullDto {
 
     private final CategoryDto category;
 
-    private final Long confirmedRequests;
+    private final long confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime createdOn;
 
@@ -42,35 +41,11 @@ public class EventFullDto {
 
     private final String title;
 
-    private final Long views;
+    private final long views;
     /**
      * Список состояний жизненного цикла события
      */
-    private StateEnum state;
-
-    @QueryProjection
-    public EventFullDto(Long id, String annotation, CategoryDto category, Long confirmedRequests,
-                        LocalDateTime createdOn, String description, LocalDateTime eventDate,
-                        UserShortDto initiator, LocationDto locationDto, Boolean paid, Integer participantLimit,
-                        LocalDateTime publishedOn, Boolean requestModeration, String title, Long views,
-                        StateEnum state) {
-        this.id = id;
-        this.annotation = annotation;
-        this.category = category;
-        this.confirmedRequests = confirmedRequests;
-        this.createdOn = createdOn;
-        this.description = description;
-        this.eventDate = eventDate;
-        this.initiator = initiator;
-        this.location = locationDto;
-        this.paid = paid;
-        this.participantLimit = participantLimit;
-        this.publishedOn = publishedOn;
-        this.requestModeration = requestModeration;
-        this.title = title;
-        this.views = views;
-        this.state = state;
-    }
+    private EventStateEnum state;
 
     @Override
     public String toString() {

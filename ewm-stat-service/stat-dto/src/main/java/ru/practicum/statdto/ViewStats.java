@@ -25,4 +25,15 @@ public class ViewStats {
         this.uri = uri;
         this.hits = hits;
     }
+
+    @Override
+    public String toString() {
+
+        String sb = "class ViewStats {\n" +
+                "    app: " + app + "\n" +
+                "    uri: " + uri + "\n" +
+                "    hits: " + hits + "\n" +
+                "}";
+        return sb;
+    }
 }

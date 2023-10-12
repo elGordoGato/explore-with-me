@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.api.utils.EventStateEnum;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.api.utils.exception.ForbiddenException;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
 import ru.practicum.mainserver.repository.RequestRepository;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.RequestEntity;
-import ru.practicum.mainserver.repository.entity.StateEnum;
 import ru.practicum.mainserver.service.RequestService;
 
 import java.util.List;
@@ -34,18 +34,18 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public RequestEntity addParticipationRequest(RequestEntity newRequest) {
-        if(newRequest.getRequester().getId().equals(newRequest.getEvent().getInitiator().getId())){
+        if (newRequest.getRequester().getId().equals(newRequest.getEvent().getInitiator().getId())) {
             throw new ForbiddenException("Initiator can not create participation request");
         }
-        if(!newRequest.getEvent().getState().equals(StateEnum.PUBLISHED)){
+        if (!newRequest.getEvent().getState().equals(EventStateEnum.PUBLISHED)) {
             throw new ForbiddenException("Event should be published to create participation request in it");
         }
         Long confirmedCount = getConfirmedRequestForEvent(
                 newRequest.getEvent().getId());
         log.debug("part size: {} and event: \n{}", confirmedCount, newRequest.getEvent());
-        if(newRequest.getEvent().getParticipantLimit() != 0 &&
+        if (newRequest.getEvent().getParticipantLimit() != 0 &&
                 confirmedCount >=
-                newRequest.getEvent().getParticipantLimit()){
+                        newRequest.getEvent().getParticipantLimit()) {
             throw new ForbiddenException(
                     "Event already reached participation limit to create participation request in it");
         }
@@ -63,14 +63,14 @@ public class RequestServiceImpl implements RequestService {
         if (!requestToCancel.getRequester().getId().equals(userId)) {
             throw new ForbiddenException("User has no rights to cancel this request");
         }
-        requestToCancel.setStatus(StatusEnum.CANCELED);
+        requestToCancel.setStatus(RequestStatusEnum.CANCELED);
         return requestToCancel;
     }
 
     @Override
     public Map<Long, Long> getConfirmedRequestForEvents(List<Long> eventIds) {
         List<RequestEntity> confirmedRequestsList = repository.findByEvent_IdInAndStatus(
-                eventIds, StatusEnum.CONFIRMED);
+                eventIds, RequestStatusEnum.CONFIRMED);
         Map<Long, Long> confirmedRequestsMap = confirmedRequestsList.stream()
                 .collect(Collectors.groupingBy(
                         request -> request.getEvent().getId(),
@@ -83,7 +83,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Long getConfirmedRequestForEvent(Long eventId) {
         Long numberOfConfirmedRequests = repository.countByEvent_IdAndStatus(
-                eventId, StatusEnum.CONFIRMED);
+                eventId, RequestStatusEnum.CONFIRMED);
         log.debug("{} confirmed requests for event with id: {}",
                 numberOfConfirmedRequests, eventId);
         return numberOfConfirmedRequests;
@@ -94,10 +94,10 @@ public class RequestServiceImpl implements RequestService {
     public Map<String, List<RequestEntity>> updateRequestsByInitiator(Long userId,
                                                                       EventEntity event,
                                                                       List<Long> requestsId,
-                                                                      StatusEnum newStatus) {
+                                                                      RequestStatusEnum newStatus) {
         List<RequestEntity> allEventRequests = repository.findByEvent_Id(event.getId());
         Long confirmedRequests = getConfirmedRequestForEvent(event.getId());
-        if(event.getParticipantLimit()-confirmedRequests-requestsId.size()<0){
+        if (event.getParticipantLimit() - confirmedRequests - requestsId.size() < 0) {
             throw new ForbiddenException("Limit of confirmed participation requests for event already reached");
         }
         List<RequestEntity> updatedRequests = allEventRequests.stream()
@@ -105,7 +105,7 @@ public class RequestServiceImpl implements RequestService {
                         requestsId.contains(requestEntity.getId()))
                 .collect(Collectors.toList());
         for (RequestEntity updatedRequest : updatedRequests) {
-            if(updatedRequest.getStatus().equals(StatusEnum.CONFIRMED)){
+            if (updatedRequest.getStatus().equals(RequestStatusEnum.CONFIRMED)) {
                 throw new ForbiddenException("Not allowed to change status of already confirmed requests");
             }
             updatedRequest.setStatus(newStatus);
@@ -113,7 +113,7 @@ public class RequestServiceImpl implements RequestService {
         allEventRequests.removeAll(repository.saveAll(updatedRequests));
         List<RequestEntity> confirmed;
         List<RequestEntity> rejected;
-        if(newStatus.equals(StatusEnum.CONFIRMED)){
+        if (newStatus.equals(RequestStatusEnum.CONFIRMED)) {
             confirmed = updatedRequests;
             rejected = allEventRequests;
         } else {

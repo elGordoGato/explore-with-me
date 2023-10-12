@@ -33,7 +33,7 @@ services:
       - "8080:8080"
     depends_on:
       - main-db
-    #      - stats-server
+      - stat-server
     environment:
       - STAT_SERVER_URL=http://stat-server:9090
       - POSTGRES_DATASOURCE_URL=jdbc:postgresql://main-db:5433/maindb

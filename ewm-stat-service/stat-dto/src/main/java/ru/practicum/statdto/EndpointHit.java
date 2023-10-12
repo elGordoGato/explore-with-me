@@ -1,15 +1,15 @@
 package ru.practicum.statdto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 
 @Data
 @Builder
+@ToString
 public class EndpointHit {
     private int id;  //Идентификатор записи
 

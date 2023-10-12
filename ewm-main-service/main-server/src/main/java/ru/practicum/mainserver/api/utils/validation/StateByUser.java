@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = StateUserValidator.class)
 public @interface StateByUser {
-    String message() default "должно содержать дату, которая еще не наступила.";
+    String message() default "Invalid state action for user request";
 
     Class<?>[] groups() default {};
 

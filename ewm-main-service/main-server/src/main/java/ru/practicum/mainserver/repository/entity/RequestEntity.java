@@ -1,7 +1,10 @@
 package ru.practicum.mainserver.repository.entity;
 
-import lombok.*;
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -22,22 +25,20 @@ public class RequestEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @ToString.Exclude
     private UserEntity requester;
     @ManyToOne
-    @ToString.Exclude
     private EventEntity event;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private RequestStatusEnum status;
 
     @Override
     public String toString() {
 
         String sb = "\nclass RequestEntity {\n" +
                 "    id: " + id + "\n" +
-                "    requester: " + requester + "\n" +
-                "    event: " + event + "\n" +
+                "    requester: " + requester.getId() + "\n" +
+                "    event: " + event.getId() + "\n" +
                 "    created: " + created + "\n" +
                 "    status: " + status + "\n" +
                 "}";

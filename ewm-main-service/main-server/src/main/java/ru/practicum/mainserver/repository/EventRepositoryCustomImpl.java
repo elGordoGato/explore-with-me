@@ -4,11 +4,11 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.mainserver.api.utils.EventParameters;
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.api.utils.EventStateEnum;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.QEventEntity;
 import ru.practicum.mainserver.repository.entity.QRequestEntity;
-import ru.practicum.mainserver.repository.entity.StateEnum;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -81,7 +81,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         return initiatorsId != null ? EVENT.initiator.id.in(initiatorsId) : null;
     }
 
-    private BooleanExpression stateIn(List<StateEnum> states) {
+    private BooleanExpression stateIn(List<EventStateEnum> states) {
         return states != null ? EVENT.state.in(states) : null;
     }
 
@@ -106,7 +106,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 EVENT.participantLimit.gt(
                         (REQUEST.event.id.eq(EVENT.id)
                                 .and(
-                                        REQUEST.status.eq(StatusEnum.CONFIRMED)))
+                                        REQUEST.status.eq(RequestStatusEnum.CONFIRMED)))
                                 .count())
                 : null;
     }

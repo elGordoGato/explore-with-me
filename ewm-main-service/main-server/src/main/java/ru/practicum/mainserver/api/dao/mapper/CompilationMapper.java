@@ -8,12 +8,14 @@ import ru.practicum.mainserver.repository.entity.EventEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class CompilationMapper {
     public CompilationEntity entityFromDto(CompilationDto dto, List<EventEntity> events) {
-        return new CompilationEntity(null, events, dto.getPinned(), dto.getTitle());
+        return new CompilationEntity(null, events, Optional.ofNullable(dto.getPinned())
+                .orElse(false), dto.getTitle());
     }
 
     public CompilationDto dtoFromEntity(CompilationEntity entity, List<EventShortDto> eventShorts) {
@@ -41,7 +43,8 @@ public class CompilationMapper {
 
     public List<EventEntity> getAllEvents(List<CompilationEntity> compilations) {
         return compilations.stream()
-                .flatMap(compilation -> compilation.getEvents().stream())
+                .flatMap(compilation -> compilation.getEvents()
+                        .stream())
                 .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.RequestEntity;
 
@@ -22,5 +22,5 @@ public interface RequestService {
     Long getConfirmedRequestForEvent(Long eventId);
 
 
-    Map<String, List<RequestEntity>> updateRequestsByInitiator(Long userId, EventEntity eventId, List<Long> requestsId, StatusEnum newStatus);
+    Map<String, List<RequestEntity>> updateRequestsByInitiator(Long userId, EventEntity eventId, List<Long> requestsId, RequestStatusEnum newStatus);
 }

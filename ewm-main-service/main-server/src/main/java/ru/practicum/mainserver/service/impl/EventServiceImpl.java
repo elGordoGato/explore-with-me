@@ -6,15 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.mainserver.api.dao.dto.InputDto;
+import ru.practicum.mainserver.api.dao.dto.InputEventDto;
 import ru.practicum.mainserver.api.utils.EventParameters;
+import ru.practicum.mainserver.api.utils.EventStateEnum;
 import ru.practicum.mainserver.api.utils.exception.ForbiddenException;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
 import ru.practicum.mainserver.repository.EventRepository;
 import ru.practicum.mainserver.repository.entity.CategoryEntity;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.LocationEntity;
-import ru.practicum.mainserver.repository.entity.StateEnum;
 import ru.practicum.mainserver.service.EventService;
 
 import java.time.Instant;
@@ -60,10 +60,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventEntity updateByUser(Long userId, Long eventId, InputDto body, LocationEntity location) {
-        EventEntity eventToBeUpdated = repository.findById(eventId)
+    public EventEntity updateByUser(Long userId, Long eventId, InputEventDto body, LocationEntity location) {
+        EventEntity eventToBeUpdated = repository.findFullById(eventId)
                 .orElseThrow(() ->
-                new NotFoundException(EventEntity.class, eventId));
+                        new NotFoundException(EventEntity.class, eventId));
 
         if (!eventToBeUpdated.getInitiator().getId().equals(userId)) {
             throw new ForbiddenException("User has no rights to update this event");
@@ -75,11 +75,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventEntity updateByAdmin(Long eventId, InputDto body, LocationEntity newLocation) {
-        EventEntity eventToBeUpdated = repository.findById(eventId)
+    public EventEntity updateByAdmin(Long eventId, InputEventDto body, LocationEntity newLocation) {
+        EventEntity eventToBeUpdated = repository.findFullById(eventId)
                 .orElseThrow(() ->
-                new NotFoundException(EventEntity.class, eventId));
-        if(!eventToBeUpdated.getState().equals(StateEnum.PENDING)){
+                        new NotFoundException(EventEntity.class, eventId));
+        if (!eventToBeUpdated.getState().equals(EventStateEnum.PENDING)) {
             throw new ForbiddenException("Only pending events can be changed");
         }
         EventEntity updatedEvent = updateEvent(eventToBeUpdated, body, newLocation);
@@ -100,7 +100,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEntity getPublic(Long id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException(EventEntity.class, id));
+        return repository.findByIdAndState(id, EventStateEnum.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException(EventEntity.class, id));
     }
 
     @Override
@@ -115,7 +116,9 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public List<EventEntity> getShortByParamsSortedByEventDate(EventParameters eventParameters, Integer from, Integer size) {
+    public List<EventEntity> getShortByParamsSortedByEventDate(EventParameters eventParameters,
+                                                               Integer from,
+                                                               Integer size) {
         return repository.findEventsByParams(false, eventParameters, from, size);
     }
 
@@ -124,16 +127,25 @@ public class EventServiceImpl implements EventService {
         return repository.findByIdIn(eventIds);
     }
 
+    @Override
+    public EventEntity getByID(Long eventId) {
+        return repository.findById(eventId).orElseThrow(() ->
+                new NotFoundException(EventEntity.class, eventId));
+    }
 
 
-    private EventEntity updateEvent(EventEntity eventToBeUpdated, InputDto body, LocationEntity newLocation) {
-        if(eventToBeUpdated.getState().equals(StateEnum.PUBLISHED)){
+    private EventEntity updateEvent(EventEntity eventToBeUpdated,
+                                    InputEventDto body,
+                                    LocationEntity newLocation) {
+        if (eventToBeUpdated.getState().equals(EventStateEnum.PUBLISHED)) {
             throw new ForbiddenException("Only pending or canceled events can be changed");
         }
         Optional.ofNullable(body.getTitle())
                 .ifPresent(eventToBeUpdated::setTitle);
         Optional.ofNullable(body.getEventDate())
-                .ifPresent(eventDate -> eventToBeUpdated.setEventDate(eventDate.toInstant(ZoneOffset.UTC)));
+                .ifPresent(eventDate ->
+                        eventToBeUpdated.setEventDate(
+                                eventDate.toInstant(ZoneOffset.UTC)));
         Optional.ofNullable(body.getPaid())
                 .ifPresent(eventToBeUpdated::setPaid);
         Optional.ofNullable(body.getDescription())
@@ -141,7 +153,9 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(body.getAnnotation())
                 .ifPresent(eventToBeUpdated::setAnnotation);
         Optional.ofNullable(body.getCategory())
-                .ifPresent(categoryId -> eventToBeUpdated.setCategory(new CategoryEntity(categoryId, null)));
+                .ifPresent(categoryId ->
+                        eventToBeUpdated.setCategory(
+                                new CategoryEntity(categoryId, null)));
         Optional.ofNullable(newLocation)
                 .ifPresent(eventToBeUpdated::setLocation);
         Optional.ofNullable(body.getParticipantLimit())
@@ -154,22 +168,22 @@ public class EventServiceImpl implements EventService {
         return eventToBeUpdated;
     }
 
-    private void updateEventState(InputDto.StateActionEnum stateAction, EventEntity event, int partLimit) {
-        switch (stateAction){
+    private void updateEventState(InputEventDto.StateActionEnum stateAction, EventEntity event, int partLimit) {
+        switch (stateAction) {
             case REJECT_EVENT:
             case CANCEL_REVIEW:
-                event.setState(StateEnum.CANCELED);
+                event.setState(EventStateEnum.CANCELED);
                 break;
             case PUBLISH_EVENT:
-                event.setState(StateEnum.PUBLISHED);
+                event.setState(EventStateEnum.PUBLISHED);
                 event.setPublishedOn(Instant.now());
                 break;
             case SEND_TO_REVIEW:
-                if (partLimit == 0){
-                    event.setState(StateEnum.PUBLISHED);
+                if (partLimit == 0) {
+                    event.setState(EventStateEnum.PUBLISHED);
                     event.setPublishedOn(Instant.now());
                 } else {
-                    event.setState(StateEnum.PENDING);
+                    event.setState(EventStateEnum.PENDING);
                 }
                 break;
         }

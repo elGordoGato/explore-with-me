@@ -16,7 +16,6 @@ import ru.practicum.mainserver.repository.entity.UserEntity;
 import ru.practicum.mainserver.service.UserService;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -45,14 +44,9 @@ public class UserServiceImpl implements UserService {
                 Expressions.TRUE.isTrue();
         Pageable pageRequest = PageRequest.of(from / size, size);
         List<UserEntity> foundUsers = repository.findAll(byIds, pageRequest).toList();
-        log.debug("Found compilations with parameters: ids - {}, from - {}, size - {}{}",
+        log.debug("Found users with parameters: ids - {}, from - {}, size - {}{}",
                 ids, from, size, foundUsers);
         return foundUsers;
-    }
-
-    @Override
-    public Map<Long, UserEntity> getMapForEvents(List<Long> eventIds) {
-        return null;
     }
 
     @Override
@@ -61,16 +55,4 @@ public class UserServiceImpl implements UserService {
                 new NotFoundException(UserEntity.class, userId));
     }
 
-    @Override
-    public void checkExistance(Long userId) {
-
-    }
-
-    @Override
-    public UserEntity check(Long userId) {
-        if (!repository.existsById(userId)) {
-            throw new NotFoundException(UserEntity.class, userId);
-        }
-        return new UserEntity(userId, null, null);
-    }
 }

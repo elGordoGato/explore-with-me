@@ -1,11 +1,8 @@
 package ru.practicum.mainserver.api.dao.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
-import ru.practicum.mainserver.api.utils.StatusEnum;
-import ru.practicum.mainserver.api.utils.exception.BadRequestException;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
@@ -22,11 +19,11 @@ public class EventRequestStatusUpdateRequest {
     private List<Long> requestIds;
     @JsonProperty("status")
     @NotNull
-    private StatusEnum status;
+    private RequestStatusEnum status;
 
     @AssertTrue
     private boolean isStatusValid() {
-        return StatusEnum.CONFIRMED.equals(status) || StatusEnum.REJECTED.equals(status);
+        return RequestStatusEnum.CONFIRMED.equals(status) || RequestStatusEnum.REJECTED.equals(status);
     }
 
     @Override
@@ -49,32 +46,4 @@ public class EventRequestStatusUpdateRequest {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
-    public enum StatusActionEnum {
-        CONFIRMED("CONFIRMED"),
-        REJECTED("REJECTED");
-
-        final String value;
-
-        StatusActionEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static StatusActionEnum fromValue(String text) {
-            for (StatusActionEnum b : StatusActionEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
 }

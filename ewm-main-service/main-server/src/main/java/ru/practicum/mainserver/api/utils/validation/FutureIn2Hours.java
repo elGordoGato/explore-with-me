@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = DateValidator.class)
 public @interface FutureIn2Hours {
-    String message() default "должно содержать дату, которая еще не наступила.";
+    String message() default "должно содержать дату, которая наступит минимум через 2 часа.";
 
     Class<?>[] groups() default {};
 

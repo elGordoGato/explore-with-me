@@ -20,18 +20,22 @@ public class PublicCategoryController {
     private final CategoryMapper categoryMapper;
 
     @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                           @RequestParam(value = "size", defaultValue = "10") @Positive Integer size) {
+    public List<CategoryDto> getCategories(@RequestParam(value = "from", defaultValue = "0")
+                                           @PositiveOrZero Integer from,
+                                           @RequestParam(value = "size", defaultValue = "10")
+                                           @Positive Integer size) {
         log.debug("Received public request to get all categories from #{} and quantity: {}",
                 from, size);
-        return categoryMapper.dtoFromEntityList(categoryService.get(from, size));
+        return categoryMapper.dtoFromEntityList(
+                categoryService.get(from, size));
     }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategory(@PathVariable("catId") Long catId) {
         log.debug("Received public request to get category with id: {}",
                 catId);
-        return categoryMapper.dtoFromEntity(categoryService.get(catId));
+        return categoryMapper.dtoFromEntity(
+                categoryService.get(catId));
     }
 
 }

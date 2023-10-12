@@ -8,11 +8,10 @@ public class DateValidator implements ConstraintValidator<FutureIn2Hours, LocalD
 
     @Override
     public boolean isValid(LocalDateTime eventDate, ConstraintValidatorContext context) {
-//        if (eventDate == null)
-//            return false;
-//        else
-        return LocalDateTime.now().plusHours(2).isBefore(eventDate);
+        if (eventDate == null) {
+            return true;
+        } else {
+            return LocalDateTime.now().plusHours(2).isBefore(eventDate);
+        }
     }
-
-
 }

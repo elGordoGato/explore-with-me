@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = StateAdminValidator.class)
 public @interface StateByAdmin {
-    String message() default "должно содержать дату, которая еще не наступила.";
+    String message() default "Invalid state action for admin request";
 
     Class<?>[] groups() default {};
 

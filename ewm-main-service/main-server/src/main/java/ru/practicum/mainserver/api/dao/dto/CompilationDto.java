@@ -3,10 +3,12 @@ package ru.practicum.mainserver.api.dao.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.validation.annotation.Validated;
+import ru.practicum.mainserver.api.utils.validation.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Builder
 @Getter
+@Validated
 public class CompilationDto {
     @JsonProperty("id")
     private Long id;
@@ -24,11 +27,11 @@ public class CompilationDto {
     private List<EventShortDto> events;
 
     @JsonProperty("pinned")
-    @NotNull
     private Boolean pinned;
 
     @JsonProperty("title")
-    @NotBlank
+    @Size(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, max = 50)
+    @NotBlank(groups = Marker.OnCreate.class)
     private String title;
 
     @Override

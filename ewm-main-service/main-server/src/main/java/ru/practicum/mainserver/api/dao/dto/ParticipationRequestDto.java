@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
-import ru.practicum.mainserver.api.utils.StatusEnum;
-import ru.practicum.mainserver.repository.entity.StateEnum;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 
 import java.time.LocalDateTime;
 
@@ -30,7 +29,7 @@ public class ParticipationRequestDto {
     private Long requester;
 
     @JsonProperty("status")
-    private StatusEnum status;
+    private RequestStatusEnum status;
 
     @Override
     public String toString() {

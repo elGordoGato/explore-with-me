@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * Пользователь
@@ -18,10 +20,13 @@ public class UserDto {
 
     @JsonProperty("name")
     @NotBlank
+    @Size(min = 2, max = 250)
     private String name;
 
     @JsonProperty("email")
     @NotBlank
+    @Email
+    @Size(min = 6, max = 254)
     private String email;
 
     @Override

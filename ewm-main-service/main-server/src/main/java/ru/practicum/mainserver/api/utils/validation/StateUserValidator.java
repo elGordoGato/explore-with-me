@@ -1,17 +1,17 @@
 package ru.practicum.mainserver.api.utils.validation;
 
-import ru.practicum.mainserver.api.dao.dto.InputDto;
+import ru.practicum.mainserver.api.dao.dto.InputEventDto;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.LocalDateTime;
 
-public class StateUserValidator implements ConstraintValidator<StateByUser, InputDto.StateActionEnum> {
+public class StateUserValidator implements ConstraintValidator<StateByUser, InputEventDto.StateActionEnum> {
 
     @Override
-    public boolean isValid(InputDto.StateActionEnum stateAction, ConstraintValidatorContext context) {
-        return InputDto.StateActionEnum.SEND_TO_REVIEW.equals(stateAction) ||
-                InputDto.StateActionEnum.CANCEL_REVIEW.equals(stateAction);
+    public boolean isValid(InputEventDto.StateActionEnum stateAction, ConstraintValidatorContext context) {
+        return InputEventDto.StateActionEnum.SEND_TO_REVIEW.equals(stateAction) ||
+                InputEventDto.StateActionEnum.CANCEL_REVIEW.equals(stateAction) ||
+                stateAction == null;
     }
 
 

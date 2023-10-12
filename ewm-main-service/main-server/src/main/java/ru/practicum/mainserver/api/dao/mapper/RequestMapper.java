@@ -1,10 +1,9 @@
 package ru.practicum.mainserver.api.dao.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.mainserver.api.dao.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.mainserver.api.dao.dto.EventRequestStatusUpdateResult;
 import ru.practicum.mainserver.api.dao.dto.ParticipationRequestDto;
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.RequestEntity;
 import ru.practicum.mainserver.repository.entity.UserEntity;
@@ -22,7 +21,7 @@ public class RequestMapper {
         request.setRequester(requester);
         request.setEvent(event);
         request.setStatus(event.getParticipantLimit() == 0 || !event.isRequestModeration() ?
-                StatusEnum.CONFIRMED : StatusEnum.PENDING);
+                RequestStatusEnum.CONFIRMED : RequestStatusEnum.PENDING);
         return request;
     }
 
@@ -37,15 +36,10 @@ public class RequestMapper {
     }
 
     public List<ParticipationRequestDto> dtoFromEntityList(List<RequestEntity> categoryEntities) {
-        return categoryEntities.stream().map(this::dtoFromEntity).collect(Collectors.toList());
-    }
-
-    public Map<Long, ParticipationRequestDto> dtoFromEntityMap(Map<Long, RequestEntity> requestEntityMap) {
-        return requestEntityMap.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> dtoFromEntity(
-                                e.getValue())));
+        return categoryEntities
+                .stream()
+                .map(this::dtoFromEntity)
+                .collect(Collectors.toList());
     }
 
     public EventRequestStatusUpdateResult getStatusUpdateResult(Map<String, List<RequestEntity>> updateResult) {

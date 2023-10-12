@@ -6,10 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainserver.api.dao.dto.*;
-import ru.practicum.mainserver.api.dao.mapper.*;
-import ru.practicum.mainserver.api.utils.StatusEnum;
+import ru.practicum.mainserver.api.dao.mapper.EventMapper;
+import ru.practicum.mainserver.api.dao.mapper.LocationMapper;
+import ru.practicum.mainserver.api.dao.mapper.RequestMapper;
+import ru.practicum.mainserver.api.utils.EventFiller;
+import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.api.utils.validation.Marker;
-import ru.practicum.mainserver.api.utils.validation.StateUserValidator;
+import ru.practicum.mainserver.api.utils.validation.StateByUser;
 import ru.practicum.mainserver.repository.entity.*;
 import ru.practicum.mainserver.service.*;
 
@@ -28,40 +31,32 @@ public class PrivateEventController {
     private final EventService eventService;
     private final EventMapper eventMapper;
     private final UserService userService;
-    private final UserMapper userMapper;
     private final LocationService locationService;
     private final LocationMapper locationMapper;
     private final RequestService requestService;
     private final RequestMapper requestMapper;
     private final CategoryService categoryService;
-    private final CategoryMapper categoryMapper;
-    private final StatService statService;
+    private final EventFiller eventFiller;
 
     @GetMapping
     public List<EventShortDto> getEvents(@PathVariable("userId") Long userId,
-                                         @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                         @RequestParam(value = "size", defaultValue = "10") @Positive Integer size) {
+                                         @RequestParam(value = "from", defaultValue = "0")
+                                         @PositiveOrZero Integer from,
+                                         @RequestParam(value = "size", defaultValue = "10")
+                                         @Positive Integer size) {
         log.debug("Received request to get all user's events for user with id: {};\n" +
                         "Page: from - {}, size - {}",
                 userId, from, size);
         List<EventEntity> userEvents = eventService.getShortsByInitiator(userId, from, size);
 
-        Map<Long, CategoryDto> categoryDtoMap = categoryMapper.dtoFromEntityMap(
-                eventMapper.getCategoryEntityMap(userEvents));
-        Map<Long, UserShortDto> userShortDtoMap = userMapper.dtoFromEntityMap(
-                eventMapper.getUserEntityMap(userEvents));
-        Map<Long, Long> confirmedRequestsMap = requestService.getConfirmedRequestForEvents(
-                eventMapper.getEventsIds(userEvents));
-        Map<Long, Long> viewsMap = statService.getMap(
-                eventMapper.getEventsIds(userEvents));
-        return eventMapper.dtoFromEntityList(userEvents, categoryDtoMap, confirmedRequestsMap, userShortDtoMap, viewsMap);
+        return eventFiller.getEventShorts(userEvents, null);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(Marker.OnCreate.class)
     public EventFullDto addEvent(@PathVariable("userId") Long userId,
-                                 @RequestBody @Valid InputDto body) {
+                                 @RequestBody @Valid InputEventDto body) {
         log.debug("Received request from user with id: {} to post event: {}",
                 userId, body);
 
@@ -74,17 +69,7 @@ public class PrivateEventController {
         EventEntity eventToCreate = eventMapper.EntityFromDto(body, initiator, location, category);
         EventEntity createdEvent = eventService.addNew(eventToCreate);
 
-        CategoryDto categoryDto = categoryMapper.dtoFromEntity(createdEvent.getCategory());
-        Long confirmedRequest = requestService.getConfirmedRequestForEvent(createdEvent.getId());
-        UserShortDto userShortDto = userMapper.shortDtoFromEntity(createdEvent.getInitiator());
-        LocationDto locationDto = locationMapper.dtoFromEntity(createdEvent.getLocation());
-        Long views = 0L;
-        return eventMapper.fullDtoFromEntity(createdEvent,
-                categoryDto,
-                confirmedRequest,
-                userShortDto,
-                locationDto,
-                views);
+        return eventFiller.getEventFullDto(createdEvent, 0L, 0L);
     }
 
     @GetMapping("/{eventId}")
@@ -93,14 +78,14 @@ public class PrivateEventController {
         log.debug("Received request from user with id: {} to get event with id: {}",
                 userId, eventId);
         EventEntity event = eventService.getShortByInitiator(userId, eventId);
-        return getEventFullDto(event);
+        return eventFiller.getEventFullDto(event);
     }
 
     @PatchMapping("/{eventId}")
-    @Validated({Marker.OnUpdate.class, StateUserValidator.class})
+    @Validated({Marker.OnUpdate.class, StateByUser.class})
     public EventFullDto updateEventByUser(@PathVariable("userId") Long userId,
                                           @PathVariable("eventId") Long eventId,
-                                          @RequestBody @Valid InputDto body) {
+                                          @RequestBody @Valid InputEventDto body) {
         log.debug("Received request from user with id: {} to update event with id: {}, new data: {}",
                 userId, eventId, body);
         LocationEntity newLocation = body.getLocationDto() != null ?
@@ -109,18 +94,19 @@ public class PrivateEventController {
                                 body.getLocationDto())) :
                 null;
         EventEntity updatedEvent = eventService.updateByUser(userId, eventId, body, newLocation);
-        return getEventFullDto(updatedEvent);
+        return eventFiller.getEventFullDto(updatedEvent);
     }
 
 
     @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult changeRequestStatus(@PathVariable("userId") Long userId,
                                                               @PathVariable("eventId") Long eventId,
-                                                              @RequestBody @Valid EventRequestStatusUpdateRequest body) {
+                                                              @RequestBody @Valid
+                                                              EventRequestStatusUpdateRequest body) {
         log.debug("Received request from user with id: {} to update event with id: {}, new data: {}",
                 userId, eventId, body);
         List<Long> requestsId = body.getRequestIds();
-        StatusEnum newStatus = body.getStatus();
+        RequestStatusEnum newStatus = body.getStatus();
         EventEntity event = eventService.getPublic(eventId);
         Map<String, List<RequestEntity>> updateResult = requestService.updateRequestsByInitiator(
                 userId, event, requestsId, newStatus);
@@ -135,21 +121,6 @@ public class PrivateEventController {
                 userId, eventId);
         List<RequestEntity> foundRequests = requestService.getByEvent(eventId, userId);
         return requestMapper.dtoFromEntityList(foundRequests);
-    }
-
-    private EventFullDto getEventFullDto(EventEntity updatedEvent) {
-        CategoryDto categoryDto = categoryMapper.dtoFromEntity(updatedEvent.getCategory());
-        Long confirmedRequest = requestService.getConfirmedRequestForEvent(updatedEvent.getId());
-        UserShortDto userShortDto = userMapper.shortDtoFromEntity(updatedEvent.getInitiator());
-        LocationDto locationDto = locationMapper.dtoFromEntity(updatedEvent.getLocation());
-        Long views = statService.getViews(updatedEvent.getId()); //TODO views
-        return eventMapper.fullDtoFromEntity(
-                updatedEvent,
-                categoryDto,
-                confirmedRequest,
-                userShortDto,
-                locationDto,
-                views);
     }
 
 

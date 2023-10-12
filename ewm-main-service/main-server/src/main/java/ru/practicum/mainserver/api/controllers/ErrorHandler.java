@@ -6,91 +6,74 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.mainserver.api.utils.exception.BadRequestException;
+import ru.practicum.mainserver.api.utils.exception.ErrorApi;
 import ru.practicum.mainserver.api.utils.exception.ForbiddenException;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
-    //    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public Map<String, List<String>> handleConflictException(final ConflictException e) {
-//        List<String> errors = List.of(e.getMessage());
-//        log.warn(errors.toString());
-//        return Map.of(HttpStatus.CONFLICT.getReasonPhrase(), errors);
-//    }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public Map<String, List<String>> handleNotValidException(final MethodArgumentNotValidException e) {
-//        List<String> errors = e.getBindingResult().getFieldErrors()
-//                .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                .collect(Collectors.toList());
-//        if (errors.isEmpty()) {
-//            errors.add((Objects.requireNonNull(e.getGlobalError())).getDefaultMessage());
-//        }
-//        log.warn(errors.toString());
-//        return Map.of(HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
-//    }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, List<String>> handleConstraintViolationException(final ConstraintViolationException e) {
-        List<String> errors = List.of(e.getLocalizedMessage());
-        return Map.of(HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
+    public ErrorApi handleConstraintViolationException(final ConstraintViolationException e) {
+        return ErrorApi.builder()
+                .error(e.toString())
+                .reason("For the requested operation the conditions are not met.")
+                .message(e.getMessage())
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorApi handleBadRequestException(final BadRequestException e) {
+        return ErrorApi.builder()
+                .error(e.toString())
+                .reason("For the requested operation the conditions are not met.")
+                .message(e.getMessage())
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, List<String>> handleNotFoundException(final NotFoundException e) {
-        List<String> errors = List.of(e.getMessage());
-        log.warn(errors.toString());
-        return Map.of(HttpStatus.NOT_FOUND.getReasonPhrase(), errors);
+    public ErrorApi handleNotFoundException(final NotFoundException e) {
+        return ErrorApi.builder()
+                .error(e.toString())
+                .reason("For the requested operation the entity was not found.")
+                .message(e.getMessage())
+                .status(HttpStatus.NOT_FOUND)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public Map<String, List<String>> handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
-//        List<String> errors = List.of(e.getLocalizedMessage());
-//        log.warn(errors.toString());
-//        return Map.of(HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
-//    }
-//
+
     @ExceptionHandler
-    //@ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, List<String>> handleForbiddenException(final ForbiddenException e) {
-        List<String> errors = List.of(e.getMessage());
-        log.warn(errors.toString());
-        return Map.of(HttpStatus.FORBIDDEN.getReasonPhrase(), errors);
+    public ErrorApi handleForbiddenException(final ForbiddenException e) {
+        return ErrorApi.builder()
+                .error(e.toString())
+                .reason("For the requested operation the conditions are not met.")
+                .message(e.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public Map<String, String> handleIllegalStateException(final IllegalStateException e) {
-//        String error = "Unknown state: " + e.getLocalizedMessage();
-//        log.warn(List.of(error).toString());
-//        return Map.of("error", error, HttpStatus.BAD_REQUEST.getReasonPhrase(), HttpStatus.BAD_REQUEST.toString());
-//    }
-//
-//
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, List<String>> handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
-        List<String> errors = List.of(e.getCause().getCause().getLocalizedMessage());
-        log.warn(errors.toString());
-        return Map.of(HttpStatus.CONFLICT.getReasonPhrase(), errors);
+    public ErrorApi handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        return ErrorApi.builder()
+                .error(e.toString())
+                .reason("For the requested operation the conditions are not met.")
+                .message(e.getCause().getCause().getLocalizedMessage())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public Map<String, List<String>> handleBadRequestException(final BadRequestException e) {
-//        List<String> errors = List.of(e.getMessage());
-//        log.warn(errors.toString());
-//        return Map.of(HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
-//    }
 }

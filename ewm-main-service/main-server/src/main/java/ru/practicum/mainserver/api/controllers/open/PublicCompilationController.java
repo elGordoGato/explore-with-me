@@ -5,15 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainserver.api.dao.dto.CompilationDto;
 import ru.practicum.mainserver.api.dao.dto.EventShortDto;
-import ru.practicum.mainserver.api.dao.mapper.CategoryMapper;
 import ru.practicum.mainserver.api.dao.mapper.CompilationMapper;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
-import ru.practicum.mainserver.api.dao.mapper.UserMapper;
+import ru.practicum.mainserver.api.utils.EventFiller;
 import ru.practicum.mainserver.repository.entity.CompilationEntity;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.service.CompilationService;
-import ru.practicum.mainserver.service.RequestService;
-import ru.practicum.mainserver.service.StatService;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -29,10 +26,7 @@ public class PublicCompilationController {
     private final CompilationService compilationService;
     private final EventMapper eventMapper;
     private final CompilationMapper compilationMapper;
-    private final StatService statService;
-    private final CategoryMapper categoryMapper;
-    private final UserMapper userMapper;
-    private final RequestService requestService;
+    private final EventFiller eventFiller;
 
     @GetMapping
     public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,
@@ -49,7 +43,8 @@ public class PublicCompilationController {
         List<CompilationEntity> compilations = compilationService.get(pinned, from, size);
 
         List<EventEntity> events = compilationMapper.getAllEvents(compilations);
-        List<EventShortDto> eventShorts = getEventShorts(events);
+        List<EventShortDto> eventShorts = eventFiller.getEventShorts(
+                events, null);
         Map<Long, EventShortDto> eventShortDtoMap = eventMapper.eventShortDtoMap(eventShorts);
 
         return compilationMapper.dtoFromEntityList(compilations, eventShortDtoMap);
@@ -61,21 +56,10 @@ public class PublicCompilationController {
         log.debug("Received public request to get compilation with id: {}",
                 compId);
         CompilationEntity compilation = compilationService.get(compId);
-        List<EventShortDto> eventShorts = getEventShorts(compilation.getEvents());
+        List<EventShortDto> eventShorts = eventFiller.getEventShorts(
+                compilation.getEvents(), null);
         return compilationMapper.dtoFromEntity(compilation, eventShorts);
     }
 
 
-    private List<EventShortDto> getEventShorts(List<EventEntity> events) {
-        return eventMapper.dtoFromEntityList(
-                events,
-                categoryMapper.dtoFromEntityMap(
-                        eventMapper.getCategoryEntityMap(events)),
-                requestService.getConfirmedRequestForEvents(
-                        eventMapper.getEventsIds(events)),
-                userMapper.dtoFromEntityMap(
-                        eventMapper.getUserEntityMap(events)),
-                statService.getMap(
-                        eventMapper.getEventsIds(events)));
-    }
 }

@@ -15,11 +15,11 @@ import java.util.List;
 public class EventRequestStatusUpdateResult {
     @JsonProperty("confirmedRequests")
     @Valid
-    private List<ParticipationRequestDto> confirmedRequests = null;
+    private List<ParticipationRequestDto> confirmedRequests;
 
     @JsonProperty("rejectedRequests")
     @Valid
-    private List<ParticipationRequestDto> rejectedRequests = null;
+    private List<ParticipationRequestDto> rejectedRequests;
 
     @Override
     public String toString() {

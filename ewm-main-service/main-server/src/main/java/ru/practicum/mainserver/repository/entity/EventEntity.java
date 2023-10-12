@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.mainserver.api.utils.EventStateEnum;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Table(name = "event")
@@ -61,9 +61,6 @@ public class EventEntity {
 
     private int participantLimit;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<RequestEntity> requestEntityList;
-
     private boolean paid;
 
     private Instant publishedOn = null;
@@ -75,38 +72,27 @@ public class EventEntity {
      */
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private StateEnum state;
+    private EventStateEnum state;
 
     @Override
     public String toString() {
 
         String sb = "\nclass EventEntity {\n" +
-                "    id: " + toIndentedString(id) + "\n" +
-                "    initiator: " + toIndentedString(initiator) + "\n" +
-                "    category: " + toIndentedString(category) + "\n" +
-                "    annotation: " + toIndentedString(annotation) + "\n" +
-                "    title: " + toIndentedString(title) + "\n" +
-                "    description: " + toIndentedString(description) + "\n" +
-                "    eventDate: " + toIndentedString(eventDate) + "\n" +
-                "    location: " + toIndentedString(location) + "\n" +
-                "    participantLimit: " + toIndentedString(participantLimit) + "\n" +
-                "    paid: " + toIndentedString(paid) + "\n" +
-                "    publishedOn: " + toIndentedString(publishedOn) + "\n" +
-                "    requestModeration: " + toIndentedString(requestModeration) + "\n" +
-                "    createdOn: " + toIndentedString(createdOn) + "\n" +
-                "    state: " + toIndentedString(state) + "\n" +
+                "    id: " + (id) + "\n" +
+                "    initiator: " + (initiator.getId()) + "\n" +
+                "    category: " + (category.getId()) + "\n" +
+                "    annotation: " + (annotation) + "\n" +
+                "    title: " + (title) + "\n" +
+                "    description: " + (description) + "\n" +
+                "    eventDate: " + (eventDate) + "\n" +
+                "    location: " + (location.getId()) + "\n" +
+                "    participantLimit: " + (participantLimit) + "\n" +
+                "    paid: " + (paid) + "\n" +
+                "    publishedOn: " + (publishedOn) + "\n" +
+                "    requestModeration: " + (requestModeration) + "\n" +
+                "    createdOn: " + (createdOn) + "\n" +
+                "    state: " + (state) + "\n" +
                 "}";
         return sb;
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
     }
 }

@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.dao.dto.InputDto;
+import ru.practicum.mainserver.api.dao.dto.InputEventDto;
 import ru.practicum.mainserver.api.utils.EventParameters;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.LocationEntity;
@@ -16,9 +16,9 @@ public interface EventService {
 
     EventEntity addNew(EventEntity body);
 
-    EventEntity updateByUser(Long userId, Long eventId, InputDto body, LocationEntity location);
+    EventEntity updateByUser(Long userId, Long eventId, InputEventDto body, LocationEntity location);
 
-    EventEntity updateByAdmin(Long eventId, InputDto body, LocationEntity newLocation);
+    EventEntity updateByAdmin(Long eventId, InputEventDto body, LocationEntity newLocation);
 
     List<Long> getIdsByParams(EventParameters parameters);
 
@@ -31,4 +31,6 @@ public interface EventService {
     EventEntity getPublic(Long id);
 
     List<EventEntity> getByIds(List<Long> eventIds);
+
+    EventEntity getByID(Long eventId);
 }

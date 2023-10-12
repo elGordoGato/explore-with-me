@@ -28,7 +28,9 @@ public class LocationEntity {
         if (this == o) return true;
         if (!(o instanceof LocationEntity)) return false;
         LocationEntity location = (LocationEntity) o;
-        return Objects.equals(id, location.id) || Objects.equals(lat, location.lat) && Objects.equals(lon, location.lon);
+        return Objects.equals(id, location.id) ||
+                Objects.equals(lat, location.lat) &&
+                        Objects.equals(lon, location.lon);
     }
 
     @Override

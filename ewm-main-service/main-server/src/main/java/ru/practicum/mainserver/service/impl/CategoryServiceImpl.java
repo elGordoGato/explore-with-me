@@ -14,7 +14,6 @@ import ru.practicum.mainserver.repository.entity.CategoryEntity;
 import ru.practicum.mainserver.service.CategoryService;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -64,18 +63,5 @@ public class CategoryServiceImpl implements CategoryService {
                 new NotFoundException(CategoryEntity.class, catId));
         log.debug("Found category: {}", category);
         return category;
-    }
-
-    @Override
-    public Map<Long, CategoryEntity> getMapForEvents(List<Long> eventIds) {
-        return null;
-    }
-
-    @Override
-    public CategoryEntity check(Long category) {
-        if (!repository.existsById(category)) {
-            throw new NotFoundException(CategoryEntity.class, category);
-        }
-        return new CategoryEntity(category, null);
     }
 }
