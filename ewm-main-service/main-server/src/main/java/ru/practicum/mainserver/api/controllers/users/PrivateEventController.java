@@ -66,7 +66,7 @@ public class PrivateEventController {
                         body.getLocationDto()));
         CategoryEntity category = categoryService.get(body.getCategory());
 
-        EventEntity eventToCreate = eventMapper.EntityFromDto(body, initiator, location, category);
+        EventEntity eventToCreate = eventMapper.entityFromDto(body, initiator, location, category);
         EventEntity createdEvent = eventService.addNew(eventToCreate);
 
         return eventFiller.getEventFullDto(createdEvent, 0L, 0L);

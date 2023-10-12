@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class EventMapper {
-    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public EventEntity EntityFromDto(InputEventDto dto,
+    public EventEntity entityFromDto(InputEventDto dto,
                                      UserEntity initiator,
                                      LocationEntity location,
                                      CategoryEntity category) {

@@ -20,8 +20,8 @@ import java.util.List;
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     @PersistenceContext
     private final EntityManager entityManager;
-    private final QEventEntity EVENT = QEventEntity.eventEntity;
-    private final QRequestEntity REQUEST = QRequestEntity.requestEntity;
+    private static final QEventEntity EVENT = QEventEntity.eventEntity;
+    private static final QRequestEntity REQUEST = QRequestEntity.requestEntity;
 
 
     @Override
