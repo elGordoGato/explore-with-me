@@ -17,21 +17,10 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
-    @ExceptionHandler
+    @ExceptionHandler(value
+            = {ConstraintViolationException.class, BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorApi handleConstraintViolationException(final ConstraintViolationException e) {
-        return ErrorApi.builder()
-                .error(e.toString())
-                .reason("For the requested operation the conditions are not met.")
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorApi handleBadRequestException(final BadRequestException e) {
+    public ErrorApi handleConstraintViolationException(final RuntimeException e) {
         return ErrorApi.builder()
                 .error(e.toString())
                 .reason("For the requested operation the conditions are not met.")

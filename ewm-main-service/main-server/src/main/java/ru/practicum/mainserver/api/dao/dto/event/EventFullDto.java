@@ -1,8 +1,11 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
+import ru.practicum.mainserver.api.dao.dto.CategoryDto;
+import ru.practicum.mainserver.api.dao.dto.LocationDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserShortDto;
 import ru.practicum.mainserver.api.utils.EventStateEnum;
 
 import java.time.LocalDateTime;

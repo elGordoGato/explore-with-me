@@ -18,11 +18,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
-    @PersistenceContext
-    private final EntityManager entityManager;
     private static final QEventEntity EVENT = QEventEntity.eventEntity;
     private static final QRequestEntity REQUEST = QRequestEntity.requestEntity;
-
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Override
     public List<Long> findIdsByParams(EventParameters parameters) {
@@ -71,26 +70,26 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     private BooleanExpression containsText(String text) {
-        return text != null ?
-                EVENT.annotation.containsIgnoreCase(text)
-                        .or(EVENT.description.containsIgnoreCase(text)) :
-                null;
+        return (text != null)
+                ? EVENT.annotation.containsIgnoreCase(text)
+                .or(EVENT.description.containsIgnoreCase(text))
+                : null;
     }
 
     private BooleanExpression initiatorIn(List<Long> initiatorsId) {
-        return initiatorsId != null ? EVENT.initiator.id.in(initiatorsId) : null;
+        return (initiatorsId != null) ? EVENT.initiator.id.in(initiatorsId) : null;
     }
 
     private BooleanExpression stateIn(List<EventStateEnum> states) {
-        return states != null ? EVENT.state.in(states) : null;
+        return (states != null) ? EVENT.state.in(states) : null;
     }
 
     private BooleanExpression categoryIdIn(List<Long> categoriesId) {
-        return categoriesId != null ? EVENT.category.id.in(categoriesId) : null;
+        return (categoriesId != null) ? EVENT.category.id.in(categoriesId) : null;
     }
 
     private BooleanExpression paidEq(Boolean paid) {
-        return paid != null ? EVENT.paid.eq(paid) : null;
+        return (paid != null) ? EVENT.paid.eq(paid) : null;
     }
 
     private BooleanExpression eventDateGreater(Instant rangeStart) {
@@ -98,16 +97,15 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     private BooleanExpression eventDateLess(Instant rangeEnd) {
-        return rangeEnd != null ? EVENT.eventDate.lt(rangeEnd) : null;
+        return (rangeEnd != null) ? EVENT.eventDate.lt(rangeEnd) : null;
     }
 
     private BooleanExpression onlyAvailable(boolean available) {
-        return available ?
-                EVENT.participantLimit.gt(
-                        (REQUEST.event.id.eq(EVENT.id)
-                                .and(
-                                        REQUEST.status.eq(RequestStatusEnum.CONFIRMED)))
-                                .count())
+        return available
+                ? EVENT.participantLimit.gt(
+                (REQUEST.event.id.eq(EVENT.id)
+                        .and(REQUEST.status.eq(RequestStatusEnum.CONFIRMED)))
+                        .count())
                 : null;
     }
 }

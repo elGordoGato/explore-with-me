@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainserver.api.dao.dto.CompilationDto;
-import ru.practicum.mainserver.api.dao.dto.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
 import ru.practicum.mainserver.api.dao.mapper.CompilationMapper;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
 import ru.practicum.mainserver.api.utils.EventFiller;
@@ -33,10 +33,9 @@ public class PublicCompilationController {
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                 @RequestParam(defaultValue = "10") @Positive int size) {
         Supplier<String> pinnedMessage = (() ->
-                (pinned != null) ?
-                        (pinned ? "" : "not ") +
-                                "pinned " :
-                        "");
+                (pinned != null)
+                        ? (pinned ? "" : "not ") + "pinned "
+                        : "");
         log.debug("Received public request to get {}compilations from #{} and size: {}",
                 pinnedMessage.get(), from, size);
 

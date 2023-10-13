@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.mainserver.api.dao.dto.EventFullDto;
-import ru.practicum.mainserver.api.dao.dto.InputEventDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventFullDto;
+import ru.practicum.mainserver.api.dao.dto.event.InputEventDto;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
 import ru.practicum.mainserver.api.dao.mapper.LocationMapper;
 import ru.practicum.mainserver.api.utils.EventFiller;
@@ -53,11 +53,9 @@ public class AdminEventController {
     @Validated({Marker.OnUpdate.class, StateByAdmin.class})
     public EventFullDto updateEvent(@PathVariable("eventId") Long eventId, @RequestBody @Valid InputEventDto body) {
         log.debug("Received request from admin to update event with id: {},\n new data: {}", eventId, body);
-        LocationEntity newLocation = body.getLocationDto() != null ?
-                locationService.save(
-                        locationMapper.entityFromDto(
-                                body.getLocationDto())) :
-                null;
+        LocationEntity newLocation = (body.getLocationDto() != null)
+                ? locationService.save(locationMapper.entityFromDto(body.getLocationDto()))
+                : null;
         EventEntity updatedEvent = eventService.updateByAdmin(eventId, body, newLocation);
         return eventFiller.getEventFullDto(updatedEvent);
     }

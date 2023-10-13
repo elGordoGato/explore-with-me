@@ -1,18 +1,20 @@
 package ru.practicum.mainserver.api.dao.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.mainserver.api.dao.dto.EventRequestStatusUpdateResult;
 import ru.practicum.mainserver.api.dao.dto.ParticipationRequestDto;
-import ru.practicum.mainserver.api.utils.RequestStatusEnum;
+import ru.practicum.mainserver.api.dao.dto.event.EventRequestStatusUpdateResult;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.RequestEntity;
 import ru.practicum.mainserver.repository.entity.UserEntity;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
+import static ru.practicum.mainserver.api.utils.RequestStatusEnum.CONFIRMED;
+import static ru.practicum.mainserver.api.utils.RequestStatusEnum.PENDING;
 
 @Component
 public class RequestMapper {
@@ -20,8 +22,7 @@ public class RequestMapper {
         RequestEntity request = new RequestEntity();
         request.setRequester(requester);
         request.setEvent(event);
-        request.setStatus(event.getParticipantLimit() == 0 || !event.isRequestModeration() ?
-                RequestStatusEnum.CONFIRMED : RequestStatusEnum.PENDING);
+        request.setStatus(((event.getParticipantLimit() == 0) || !event.isRequestModeration()) ? CONFIRMED : PENDING);
         return request;
     }
 
@@ -30,7 +31,7 @@ public class RequestMapper {
                 .id(entity.getId())
                 .requester(entity.getRequester().getId())
                 .event(entity.getEvent().getId())
-                .created(LocalDateTime.ofInstant(entity.getCreated(), ZoneOffset.UTC))
+                .created(LocalDateTime.ofInstant(entity.getCreated(), UTC))
                 .status(entity.getStatus())
                 .build();
     }

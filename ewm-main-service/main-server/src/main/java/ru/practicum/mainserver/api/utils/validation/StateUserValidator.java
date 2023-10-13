@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.api.utils.validation;
 
-import ru.practicum.mainserver.api.dao.dto.InputEventDto;
+import ru.practicum.mainserver.api.dao.dto.event.InputEventDto;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

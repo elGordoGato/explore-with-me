@@ -2,7 +2,11 @@ package ru.practicum.mainserver.api.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.mainserver.api.dao.dto.*;
+import ru.practicum.mainserver.api.dao.dto.CategoryDto;
+import ru.practicum.mainserver.api.dao.dto.LocationDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventFullDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserShortDto;
 import ru.practicum.mainserver.api.dao.mapper.CategoryMapper;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
 import ru.practicum.mainserver.api.dao.mapper.LocationMapper;

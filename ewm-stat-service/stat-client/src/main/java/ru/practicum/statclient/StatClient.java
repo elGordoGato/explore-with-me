@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +16,9 @@ import ru.practicum.statdto.ViewStats;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 
 @Service
@@ -44,17 +49,18 @@ public class StatClient {
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, defaultHeaders());
         ResponseEntity<List<ViewStats>> response = rest
                 .exchange("/stats?start={start}&end={end}&uris={uris}&unique={unique}",
-                        HttpMethod.GET,
+                        GET,
                         requestEntity,
                         new ParameterizedTypeReference<List<ViewStats>>() {
-                        }, parameters);
+                        },
+                        parameters);
         return response.getBody();
     }
 
     private HttpHeaders defaultHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.setContentType(APPLICATION_JSON);
+        headers.setAccept(List.of(APPLICATION_JSON));
         return headers;
     }
 }

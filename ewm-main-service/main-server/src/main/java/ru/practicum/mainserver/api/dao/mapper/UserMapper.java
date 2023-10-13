@@ -1,8 +1,8 @@
 package ru.practicum.mainserver.api.dao.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.mainserver.api.dao.dto.UserDto;
-import ru.practicum.mainserver.api.dao.dto.UserShortDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserShortDto;
 import ru.practicum.mainserver.repository.entity.UserEntity;
 
 import java.util.List;
@@ -24,7 +24,9 @@ public class UserMapper {
     }
 
     public List<UserDto> dtoFromEntityList(List<UserEntity> userEntities) {
-        return userEntities.stream().map(this::dtoFromEntity).collect(Collectors.toList());
+        return userEntities.stream()
+                .map(this::dtoFromEntity)
+                .collect(Collectors.toList());
     }
 
     public Map<Long, UserShortDto> dtoFromEntityMap(Map<Long, UserEntity> userEntityMap) {

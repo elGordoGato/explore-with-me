@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
 import ru.practicum.mainserver.api.utils.validation.Marker;
 
 import javax.validation.Valid;

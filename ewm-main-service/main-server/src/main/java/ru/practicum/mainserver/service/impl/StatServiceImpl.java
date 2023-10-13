@@ -9,13 +9,14 @@ import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.EndpointHit;
 import ru.practicum.statdto.ViewStats;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.time.LocalDateTime.now;
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
@@ -32,7 +33,7 @@ public class StatServiceImpl implements StatService {
                 .app("ewm-main-service")
                 .uri(uri)
                 .ip(ip)
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC).format(FORMATTER))
+                .timestamp(now(UTC).format(FORMATTER))
                 .build();
         statClient.saveHit(hit);
         log.debug("{} - successfully saved to stats", hit);
@@ -41,10 +42,10 @@ public class StatServiceImpl implements StatService {
     @Override
     public Map<Long, Long> getMap(List<Long> eventsIds) {
         String startEncoded = UriUtils.encode(
-                LocalDateTime.now().minusYears(10)
+                now().minusYears(10)
                         .format(FORMATTER), "UTF-8");
         String endEncoded = UriUtils.encode(
-                LocalDateTime.now(ZoneOffset.UTC)
+                now(UTC)
                         .format(FORMATTER), "UTF-8");
         String uris = eventsIds
                 .stream()
@@ -63,10 +64,10 @@ public class StatServiceImpl implements StatService {
     @Override
     public Long getViews(Long id) {
         String startEncoded = UriUtils.encode(
-                LocalDateTime.now().minusYears(10)
+                now().minusYears(10)
                         .format(FORMATTER), "UTF-8");
         String endEncoded = UriUtils.encode(
-                LocalDateTime.now(ZoneOffset.UTC)
+                now(UTC)
                         .format(FORMATTER), "UTF-8");
         String uri = "/events/" + id;
         List<ViewStats> viewStats = statClient.getViewStats(startEncoded, endEncoded, uri, true);

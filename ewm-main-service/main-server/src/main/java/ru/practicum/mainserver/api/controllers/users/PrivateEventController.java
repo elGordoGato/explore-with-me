@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.mainserver.api.dao.dto.*;
+import ru.practicum.mainserver.api.dao.dto.ParticipationRequestDto;
+import ru.practicum.mainserver.api.dao.dto.event.*;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
 import ru.practicum.mainserver.api.dao.mapper.LocationMapper;
 import ru.practicum.mainserver.api.dao.mapper.RequestMapper;
@@ -88,11 +89,9 @@ public class PrivateEventController {
                                           @RequestBody @Valid InputEventDto body) {
         log.debug("Received request from user with id: {} to update event with id: {}, new data: {}",
                 userId, eventId, body);
-        LocationEntity newLocation = body.getLocationDto() != null ?
-                locationService.save(
-                        locationMapper.entityFromDto(
-                                body.getLocationDto())) :
-                null;
+        LocationEntity newLocation = (body.getLocationDto() != null)
+                ? locationService.save(locationMapper.entityFromDto(body.getLocationDto()))
+                : null;
         EventEntity updatedEvent = eventService.updateByUser(userId, eventId, body, newLocation);
         return eventFiller.getEventFullDto(updatedEvent);
     }

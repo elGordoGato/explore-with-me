@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.dao.dto.UserDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserDto;
 import ru.practicum.mainserver.repository.entity.UserEntity;
 
 import java.util.List;

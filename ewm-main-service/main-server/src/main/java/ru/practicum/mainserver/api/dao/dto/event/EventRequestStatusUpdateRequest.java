@@ -1,4 +1,4 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

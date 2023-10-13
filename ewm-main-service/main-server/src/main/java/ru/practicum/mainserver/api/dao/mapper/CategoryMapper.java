@@ -22,7 +22,9 @@ public class CategoryMapper {
     }
 
     public List<CategoryDto> dtoFromEntityList(List<CategoryEntity> categoryEntities) {
-        return categoryEntities.stream().map(this::dtoFromEntity).collect(Collectors.toList());
+        return categoryEntities.stream()
+                .map(this::dtoFromEntity)
+                .collect(Collectors.toList());
     }
 
     public Map<Long, CategoryDto> dtoFromEntityMap(Map<Long, CategoryEntity> categoryEntityMap) {

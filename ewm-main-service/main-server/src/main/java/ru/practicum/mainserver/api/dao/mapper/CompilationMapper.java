@@ -2,7 +2,7 @@ package ru.practicum.mainserver.api.dao.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.mainserver.api.dao.dto.CompilationDto;
-import ru.practicum.mainserver.api.dao.dto.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
 import ru.practicum.mainserver.repository.entity.CompilationEntity;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 
@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 @Component
 public class CompilationMapper {
     public CompilationEntity entityFromDto(CompilationDto dto, List<EventEntity> events) {
-        return new CompilationEntity(null, events, Optional.ofNullable(dto.getPinned())
-                .orElse(false), dto.getTitle());
+        return new CompilationEntity(null, events,
+                Optional.ofNullable(dto.getPinned()).orElse(false),
+                dto.getTitle());
     }
 
     public CompilationDto dtoFromEntity(CompilationEntity entity, List<EventShortDto> eventShorts) {
@@ -31,14 +32,19 @@ public class CompilationMapper {
                                                   Map<Long, EventShortDto> eventShortDtoMap) {
         return compilationEntities.stream()
                 .map(compilation ->
-                        dtoFromEntity(
-                                compilation,
-                                compilation.getEvents()
-                                        .stream()
-                                        .map(event ->
-                                                eventShortDtoMap.get(event.getId()))
-                                        .collect(Collectors.toList())))
+                        getCompilationDto(eventShortDtoMap, compilation))
                 .collect(Collectors.toList());
+    }
+
+    private CompilationDto getCompilationDto(Map<Long, EventShortDto> eventShortDtoMap,
+                                             CompilationEntity compilation) {
+        List<EventShortDto> eventShortsForCompilation = compilation
+                .getEvents().stream()
+                .map(event ->
+                        eventShortDtoMap.get(event.getId()))
+                .collect(Collectors.toList());
+
+        return dtoFromEntity(compilation, eventShortsForCompilation);
     }
 
     public List<EventEntity> getAllEvents(List<CompilationEntity> compilations) {

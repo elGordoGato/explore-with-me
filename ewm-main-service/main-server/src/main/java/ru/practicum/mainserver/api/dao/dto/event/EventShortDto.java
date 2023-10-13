@@ -1,10 +1,12 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import ru.practicum.mainserver.api.dao.dto.CategoryDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserShortDto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

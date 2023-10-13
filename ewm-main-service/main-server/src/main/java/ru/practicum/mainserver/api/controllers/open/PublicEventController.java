@@ -3,8 +3,8 @@ package ru.practicum.mainserver.api.controllers.open;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.mainserver.api.dao.dto.EventFullDto;
-import ru.practicum.mainserver.api.dao.dto.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventFullDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
 import ru.practicum.mainserver.api.dao.mapper.EventMapper;
 import ru.practicum.mainserver.api.utils.EventFiller;
 import ru.practicum.mainserver.api.utils.EventParameters;
@@ -19,6 +19,8 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
+
+import static ru.practicum.mainserver.api.utils.SortEnum.VIEWS;
 
 @Slf4j
 @RestController
@@ -36,8 +38,7 @@ public class PublicEventController {
                                  HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         String uri = request.getRequestURI();
-        log.info("client ip: {}", ip);
-        log.info("endpoint path: {}", uri);
+        log.debug("client ip: {} | endpoint path: {}", ip, uri);
         log.debug("Received public request to get event with id: {}", id);
         EventEntity event = eventService.getPublic(id);
         EventFullDto fullDto = eventFiller.getEventFullDto(event);
@@ -74,7 +75,7 @@ public class PublicEventController {
         log.info("Received public request to get events with parameters: {}", eventParameters);
         List<EventEntity> foundSortedEvents;
         Map<Long, Long> viewsMap = null;
-        if (sort.equals(SortEnum.VIEWS)) {
+        if (sort.equals(VIEWS)) {
             List<Long> foundEventIds = eventService.getIdsByParams(eventParameters);
             viewsMap = statService.getMap(foundEventIds);
             foundSortedEvents = eventService.getShortSortedByViews(

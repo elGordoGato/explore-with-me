@@ -1,6 +1,6 @@
 package ru.practicum.mainserver.service;
 
-import ru.practicum.mainserver.api.dao.dto.InputEventDto;
+import ru.practicum.mainserver.api.dao.dto.event.InputEventDto;
 import ru.practicum.mainserver.api.utils.EventParameters;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.LocationEntity;

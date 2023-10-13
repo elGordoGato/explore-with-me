@@ -6,9 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.mainserver.api.dao.dto.InputEventDto;
+import ru.practicum.mainserver.api.dao.dto.event.InputEventDto;
 import ru.practicum.mainserver.api.utils.EventParameters;
-import ru.practicum.mainserver.api.utils.EventStateEnum;
 import ru.practicum.mainserver.api.utils.exception.ForbiddenException;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
 import ru.practicum.mainserver.repository.EventRepository;
@@ -18,12 +17,14 @@ import ru.practicum.mainserver.repository.entity.LocationEntity;
 import ru.practicum.mainserver.service.EventService;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
+import static ru.practicum.mainserver.api.utils.EventStateEnum.*;
 
 @Slf4j
 @Service
@@ -79,7 +80,7 @@ public class EventServiceImpl implements EventService {
         EventEntity eventToBeUpdated = repository.findFullById(eventId)
                 .orElseThrow(() ->
                         new NotFoundException(EventEntity.class, eventId));
-        if (!eventToBeUpdated.getState().equals(EventStateEnum.PENDING)) {
+        if (!eventToBeUpdated.getState().equals(PENDING)) {
             throw new ForbiddenException("Only pending events can be changed");
         }
         EventEntity updatedEvent = updateEvent(eventToBeUpdated, body, newLocation);
@@ -100,7 +101,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEntity getPublic(Long id) {
-        return repository.findByIdAndState(id, EventStateEnum.PUBLISHED)
+        return repository.findByIdAndState(id, PUBLISHED)
                 .orElseThrow(() -> new NotFoundException(EventEntity.class, id));
     }
 
@@ -129,15 +130,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEntity getByID(Long eventId) {
-        return repository.findById(eventId).orElseThrow(() ->
-                new NotFoundException(EventEntity.class, eventId));
+        return repository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(EventEntity.class, eventId));
     }
 
 
     private EventEntity updateEvent(EventEntity eventToBeUpdated,
                                     InputEventDto body,
                                     LocationEntity newLocation) {
-        if (eventToBeUpdated.getState().equals(EventStateEnum.PUBLISHED)) {
+        if (eventToBeUpdated.getState().equals(PUBLISHED)) {
             throw new ForbiddenException("Only pending or canceled events can be changed");
         }
         Optional.ofNullable(body.getTitle())
@@ -145,7 +146,7 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(body.getEventDate())
                 .ifPresent(eventDate ->
                         eventToBeUpdated.setEventDate(
-                                eventDate.toInstant(ZoneOffset.UTC)));
+                                eventDate.toInstant(UTC)));
         Optional.ofNullable(body.getPaid())
                 .ifPresent(eventToBeUpdated::setPaid);
         Optional.ofNullable(body.getDescription())
@@ -165,6 +166,7 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(body.getStateAction())
                 .ifPresent(stateAction -> updateEventState(
                         stateAction, eventToBeUpdated, eventToBeUpdated.getParticipantLimit()));
+
         return eventToBeUpdated;
     }
 
@@ -172,18 +174,18 @@ public class EventServiceImpl implements EventService {
         switch (stateAction) {
             case REJECT_EVENT:
             case CANCEL_REVIEW:
-                event.setState(EventStateEnum.CANCELED);
+                event.setState(CANCELED);
                 break;
             case PUBLISH_EVENT:
-                event.setState(EventStateEnum.PUBLISHED);
+                event.setState(PUBLISHED);
                 event.setPublishedOn(Instant.now());
                 break;
             case SEND_TO_REVIEW:
                 if (partLimit == 0) {
-                    event.setState(EventStateEnum.PUBLISHED);
+                    event.setState(PUBLISHED);
                     event.setPublishedOn(Instant.now());
                 } else {
-                    event.setState(EventStateEnum.PENDING);
+                    event.setState(PENDING);
                 }
                 break;
         }

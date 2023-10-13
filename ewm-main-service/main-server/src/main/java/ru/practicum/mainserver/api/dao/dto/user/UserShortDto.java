@@ -1,4 +1,4 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

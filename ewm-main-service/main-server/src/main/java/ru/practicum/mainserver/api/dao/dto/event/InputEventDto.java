@@ -1,4 +1,4 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
+import ru.practicum.mainserver.api.dao.dto.LocationDto;
 import ru.practicum.mainserver.api.utils.validation.FutureIn2Hours;
 import ru.practicum.mainserver.api.utils.validation.Marker;
 import ru.practicum.mainserver.api.utils.validation.StateByAdmin;
@@ -17,6 +18,8 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static java.time.LocalDateTime.now;
 
 /**
  * Новое событие
@@ -72,7 +75,7 @@ public class InputEventDto {
     private boolean isDateIn1Hour() {
         return Optional.ofNullable(eventDate)
                 .map(date ->
-                        date.isAfter(LocalDateTime.now().plusHours(1)))
+                        date.isAfter(now().plusHours(1)))
                 .orElse(true);
     }
 

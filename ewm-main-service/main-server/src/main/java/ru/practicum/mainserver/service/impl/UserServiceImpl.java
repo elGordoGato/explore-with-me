@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.mainserver.api.dao.dto.UserDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserDto;
 import ru.practicum.mainserver.api.dao.mapper.UserMapper;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
 import ru.practicum.mainserver.repository.UserRepository;
@@ -39,10 +39,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserEntity> getUsers(List<Long> ids, Integer from, Integer size) {
-        BooleanExpression byIds = (ids != null) ?
-                QUserEntity.userEntity.id.in(ids) :
-                Expressions.TRUE.isTrue();
+        BooleanExpression byIds = (ids != null)
+                ? QUserEntity.userEntity.id.in(ids)
+                : Expressions.TRUE.isTrue();
         Pageable pageRequest = PageRequest.of(from / size, size);
+
         List<UserEntity> foundUsers = repository.findAll(byIds, pageRequest).toList();
         log.debug("Found users with parameters: ids - {}, from - {}, size - {}{}",
                 ids, from, size, foundUsers);

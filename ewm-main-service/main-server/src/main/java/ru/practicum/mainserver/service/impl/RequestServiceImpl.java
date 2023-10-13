@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.mainserver.api.utils.EventStateEnum;
 import ru.practicum.mainserver.api.utils.RequestStatusEnum;
 import ru.practicum.mainserver.api.utils.exception.ForbiddenException;
 import ru.practicum.mainserver.api.utils.exception.NotFoundException;
@@ -16,6 +15,9 @@ import ru.practicum.mainserver.service.RequestService;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static ru.practicum.mainserver.api.utils.EventStateEnum.PUBLISHED;
+import static ru.practicum.mainserver.api.utils.RequestStatusEnum.CONFIRMED;
 
 @Slf4j
 @Service
@@ -37,15 +39,14 @@ public class RequestServiceImpl implements RequestService {
         if (newRequest.getRequester().getId().equals(newRequest.getEvent().getInitiator().getId())) {
             throw new ForbiddenException("Initiator can not create participation request");
         }
-        if (!newRequest.getEvent().getState().equals(EventStateEnum.PUBLISHED)) {
+        if (!newRequest.getEvent().getState().equals(PUBLISHED)) {
             throw new ForbiddenException("Event should be published to create participation request in it");
         }
         Long confirmedCount = getConfirmedRequestForEvent(
                 newRequest.getEvent().getId());
         log.debug("part size: {} and event: \n{}", confirmedCount, newRequest.getEvent());
-        if (newRequest.getEvent().getParticipantLimit() != 0 &&
-                confirmedCount >=
-                        newRequest.getEvent().getParticipantLimit()) {
+        if (newRequest.getEvent().getParticipantLimit() != 0
+                && confirmedCount >= newRequest.getEvent().getParticipantLimit()) {
             throw new ForbiddenException(
                     "Event already reached participation limit to create participation request in it");
         }
@@ -70,7 +71,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Map<Long, Long> getConfirmedRequestForEvents(List<Long> eventIds) {
         List<RequestEntity> confirmedRequestsList = repository.findByEvent_IdInAndStatus(
-                eventIds, RequestStatusEnum.CONFIRMED);
+                eventIds, CONFIRMED);
         Map<Long, Long> confirmedRequestsMap = confirmedRequestsList.stream()
                 .collect(Collectors.groupingBy(
                         request -> request.getEvent().getId(),
@@ -83,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Long getConfirmedRequestForEvent(Long eventId) {
         Long numberOfConfirmedRequests = repository.countByEvent_IdAndStatus(
-                eventId, RequestStatusEnum.CONFIRMED);
+                eventId, CONFIRMED);
         log.debug("{} confirmed requests for event with id: {}",
                 numberOfConfirmedRequests, eventId);
         return numberOfConfirmedRequests;
@@ -105,7 +106,7 @@ public class RequestServiceImpl implements RequestService {
                         requestsId.contains(requestEntity.getId()))
                 .collect(Collectors.toList());
         for (RequestEntity updatedRequest : updatedRequests) {
-            if (updatedRequest.getStatus().equals(RequestStatusEnum.CONFIRMED)) {
+            if (updatedRequest.getStatus().equals(CONFIRMED)) {
                 throw new ForbiddenException("Not allowed to change status of already confirmed requests");
             }
             updatedRequest.setStatus(newStatus);
@@ -113,7 +114,7 @@ public class RequestServiceImpl implements RequestService {
         allEventRequests.removeAll(repository.saveAll(updatedRequests));
         List<RequestEntity> confirmed;
         List<RequestEntity> rejected;
-        if (newStatus.equals(RequestStatusEnum.CONFIRMED)) {
+        if (newStatus.equals(CONFIRMED)) {
             confirmed = updatedRequests;
             rejected = allEventRequests;
         } else {

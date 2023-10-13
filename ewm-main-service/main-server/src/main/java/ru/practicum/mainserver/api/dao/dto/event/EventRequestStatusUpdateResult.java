@@ -1,8 +1,9 @@
-package ru.practicum.mainserver.api.dao.dto;
+package ru.practicum.mainserver.api.dao.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import ru.practicum.mainserver.api.dao.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
 import java.util.List;

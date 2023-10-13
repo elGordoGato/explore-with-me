@@ -1,7 +1,12 @@
 package ru.practicum.mainserver.api.dao.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.mainserver.api.dao.dto.*;
+import ru.practicum.mainserver.api.dao.dto.CategoryDto;
+import ru.practicum.mainserver.api.dao.dto.LocationDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventFullDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.event.InputEventDto;
+import ru.practicum.mainserver.api.dao.dto.user.UserShortDto;
 import ru.practicum.mainserver.api.utils.EventParameters;
 import ru.practicum.mainserver.api.utils.EventStateEnum;
 import ru.practicum.mainserver.api.utils.exception.BadRequestException;
@@ -10,9 +15,7 @@ import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.LocationEntity;
 import ru.practicum.mainserver.repository.entity.UserEntity;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.time.Instant.now;
+import static java.time.ZoneOffset.UTC;
+import static ru.practicum.mainserver.api.utils.EventStateEnum.PENDING;
+import static ru.practicum.mainserver.api.utils.EventStateEnum.PUBLISHED;
 
 @Component
 public class EventMapper {
@@ -35,7 +43,7 @@ public class EventMapper {
         entity.setDescription(dto.getDescription());
         entity.setInitiator(initiator);
         entity.setCategory(category);
-        entity.setEventDate(dto.getEventDate().toInstant(ZoneOffset.UTC));
+        entity.setEventDate(dto.getEventDate().toInstant(UTC));
         entity.setLocation(location);
         entity.setParticipantLimit(Optional.ofNullable(
                         dto.getParticipantLimit())
@@ -43,10 +51,14 @@ public class EventMapper {
         entity.setPaid(Optional.ofNullable(dto.getPaid())
                 .orElse(false));
         entity.setRequestModeration(
-                dto.getRequestModeration() != null ? dto.getRequestModeration() : true);
-        entity.setState(EventStateEnum.PENDING);
+                (dto.getRequestModeration() != null)
+                        ? dto.getRequestModeration()
+                        : true);
+        entity.setState(PENDING);
         entity.setPublishedOn(
-                entity.getState().equals(EventStateEnum.PUBLISHED) ? Instant.now() : null);
+                (entity.getState().equals(PUBLISHED))
+                        ? now()
+                        : null);
         return entity;
     }
 
@@ -57,7 +69,7 @@ public class EventMapper {
                                           LocationDto locationDto,
                                           Long views) {
         LocalDateTime publishedOn = Optional.ofNullable(entity.getPublishedOn())
-                .map(published -> LocalDateTime.ofInstant(published, ZoneOffset.UTC))
+                .map(published -> LocalDateTime.ofInstant(published, UTC))
                 .orElse(null);
         return EventFullDto.builder()
                 .id(entity.getId())
@@ -65,9 +77,9 @@ public class EventMapper {
                 .category(categoryDto)
                 .confirmedRequests(Optional.ofNullable(confirmedRequests)
                         .orElse(0L))
-                .createdOn(LocalDateTime.ofInstant(entity.getCreatedOn(), ZoneOffset.UTC))
+                .createdOn(LocalDateTime.ofInstant(entity.getCreatedOn(), UTC))
                 .description(entity.getDescription())
-                .eventDate(LocalDateTime.ofInstant(entity.getEventDate(), ZoneOffset.UTC))
+                .eventDate(LocalDateTime.ofInstant(entity.getEventDate(), UTC))
                 .initiator(userDto)
                 .location(locationDto)
                 .paid(entity.isPaid())
@@ -92,7 +104,7 @@ public class EventMapper {
                 .category(categoryDto)
                 .confirmedRequests(confirmedRequests)
                 .eventDate(LocalDateTime.ofInstant(
-                        entity.getEventDate(), ZoneOffset.UTC))
+                        entity.getEventDate(), UTC))
                 .initiator(userDto)
                 .paid(entity.isPaid())
                 .title(entity.getTitle())
@@ -144,28 +156,32 @@ public class EventMapper {
         EventParameters parameters = EventParameters.builder()
                 .text(text)
                 .users(users)
-                .states(states != null ?
-                        states.stream()
-                                .map(EventStateEnum::fromValue)
-                                .collect(Collectors.toList()) : null)
+                .states((states != null)
+                        ? states.stream()
+                        .map(EventStateEnum::fromValue)
+                        .collect(Collectors.toList())
+                        : null)
                 .categories(categories)
                 .paid(paid)
-                .rangeStart(rangeStart != null ?
-                        LocalDateTime.parse(rangeStart, FORMATTER)
-                                .toInstant(ZoneOffset.UTC) :
-                        Instant.now())
-                .rangeEnd(rangeEnd != null ?
-                        LocalDateTime.parse(rangeEnd, FORMATTER)
-                                .toInstant(ZoneOffset.UTC) :
-                        null)
-                .onlyAvailable(onlyAvailable != null ? onlyAvailable : false)
+                .rangeStart((rangeStart != null)
+                        ? LocalDateTime.parse(rangeStart, FORMATTER)
+                        .toInstant(UTC)
+                        : now())
+                .rangeEnd((rangeEnd != null)
+                        ? LocalDateTime.parse(rangeEnd, FORMATTER)
+                        .toInstant(UTC)
+                        : null)
+                .onlyAvailable((onlyAvailable != null)
+                        ? onlyAvailable
+                        : false)
                 .build();
-        Optional.ofNullable(parameters.getRangeEnd()).ifPresent(end -> {
-                    if (parameters.getRangeStart().isAfter(end)) {
-                        throw new BadRequestException("Invalid range parameters");
-                    }
-                }
-        );
+        Optional.ofNullable(parameters.getRangeEnd())
+                .ifPresent(end -> {
+                            if (parameters.getRangeStart().isAfter(end)) {
+                                throw new BadRequestException("Invalid range parameters");
+                            }
+                        }
+                );
         return parameters;
     }
 

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainserver.api.dao.dto.CompilationDto;
-import ru.practicum.mainserver.api.dao.dto.EventShortDto;
+import ru.practicum.mainserver.api.dao.dto.event.EventShortDto;
 import ru.practicum.mainserver.api.dao.mapper.CompilationMapper;
 import ru.practicum.mainserver.api.utils.EventFiller;
 import ru.practicum.mainserver.api.utils.validation.Marker;
@@ -38,12 +38,14 @@ public class AdminCompilationController {
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto saveCompilation(@RequestBody @Valid CompilationDto body) {
         log.debug("Received request from admin to save compilation: {}", body);
-        List<EventEntity> eventEntities = eventService.getByIds(
-                Optional.ofNullable(body.getEvents())
-                        .orElse(new ArrayList<>())
-                        .stream()
-                        .map(EventShortDto::getId)
-                        .collect(Collectors.toList()));
+        List<Long> ids = Optional.ofNullable(
+                        body.getEvents())
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(EventShortDto::getId)
+                .collect(Collectors.toList());
+        List<EventEntity> eventEntities = eventService.getByIds(ids);
+
         CompilationEntity savedCompilation = compilationService.save(body, eventEntities);
         List<EventShortDto> eventShorts = eventFiller.getEventShorts(
                 savedCompilation.getEvents(), null);
@@ -56,7 +58,8 @@ public class AdminCompilationController {
                                             @RequestBody @Valid CompilationDto body) {
         log.debug("Received request from admin to update compilation with id: {}, new compilation: {}",
                 compId, body);
-        List<EventEntity> eventEntities = Optional.ofNullable(body.getEvents())
+        List<EventEntity> eventEntities = Optional.ofNullable(
+                        body.getEvents())
                 .map(events -> events.stream()
                         .map(EventShortDto::getId)
                         .collect(Collectors.toList()))
