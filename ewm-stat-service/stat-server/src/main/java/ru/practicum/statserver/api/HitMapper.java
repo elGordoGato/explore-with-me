@@ -31,7 +31,7 @@ public class HitMapper {
                                 String.format(
                                         "No enum constant with property name %s in %s",
                                         dtoApp, AppName.class)));
-        Instant timestamp = hitDto.getTimestamp().toInstant(UTC);
+        Instant timestamp = LocalDateTime.parse(hitDto.getTimestamp(), FORMATTER).toInstant(UTC);
         return new HitEntity(null,
                 app,
                 hitDto.getUri(),
