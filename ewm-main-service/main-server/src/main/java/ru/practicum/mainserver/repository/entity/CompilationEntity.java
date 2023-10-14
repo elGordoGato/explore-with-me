@@ -26,6 +26,9 @@ public class CompilationEntity {
     @Column(nullable = false, unique = true)
     private String title;
 
+    @OneToOne
+    private AreaEntity area;
+
     @Override
     public String toString() {
         String sb = "\nclass CompilationEntity {\n" +
