@@ -13,7 +13,6 @@ import ru.practicum.mainserver.repository.entity.AreaEntity;
 import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.service.AreaService;
 import ru.practicum.mainserver.service.EventService;
-import ru.practicum.mainserver.service.LocationService;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -25,7 +24,6 @@ import java.util.Map;
 @RequestMapping(path = "/area")
 @RequiredArgsConstructor
 public class PublicAreaController {
-    private final LocationService locationService;
     private final LocationMapper locationMapper;
     private final AreaMapper areaMapper;
     private final AreaService areaService;
