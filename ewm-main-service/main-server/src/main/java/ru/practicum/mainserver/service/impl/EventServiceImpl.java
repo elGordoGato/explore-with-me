@@ -134,6 +134,18 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException(EventEntity.class, eventId));
     }
 
+    @Override
+    public List<EventEntity> findAllForArea(LocationEntity location,
+                                            float radius,
+                                            int from,
+                                            int size) {
+        List<EventEntity> eventsInArea = repository.findShortByArea(
+                location.getLat(), location.getLon(), radius, from, size);
+        log.debug("Found events within {} km from {}, \nPage: from - {}, size - {}:\n{}",
+                radius, location, from, size, eventsInArea);
+        return eventsInArea;
+    }
+
 
     private EventEntity updateEvent(EventEntity eventToBeUpdated,
                                     InputEventDto body,
