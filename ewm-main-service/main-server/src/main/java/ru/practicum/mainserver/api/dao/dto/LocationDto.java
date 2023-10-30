@@ -13,6 +13,8 @@ import java.util.Objects;
 @Getter
 @Builder
 public class LocationDto {
+    private Long id;
+
     @JsonProperty("lat")
     private Float lat;
 

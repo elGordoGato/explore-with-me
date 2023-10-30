@@ -77,7 +77,7 @@ public class EventEntity {
     @Override
     public String toString() {
 
-        String sb = "\nclass EventEntity {\n" +
+        return "\nclass EventEntity {\n" +
                 "    id: " + (id) + "\n" +
                 "    initiator: " + (initiator.getId()) + "\n" +
                 "    category: " + (category.getId()) + "\n" +
@@ -93,6 +93,5 @@ public class EventEntity {
                 "    createdOn: " + (createdOn) + "\n" +
                 "    state: " + (state) + "\n" +
                 "}";
-        return sb;
     }
 }

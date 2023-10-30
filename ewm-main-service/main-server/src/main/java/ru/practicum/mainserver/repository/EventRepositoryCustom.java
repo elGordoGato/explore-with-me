@@ -10,4 +10,6 @@ public interface EventRepositoryCustom {
     List<Long> findIdsByParams(EventParameters parameters);
 
     List<EventEntity> findEventsByParams(boolean isFull, EventParameters parameters, int from, int size);
+
+    List<EventEntity> findShortByArea(float lat, float lon, float dist, int from, int size);
 }

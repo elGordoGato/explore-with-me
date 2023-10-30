@@ -1,6 +1,7 @@
 package ru.practicum.mainserver.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.mainserver.api.utils.EventParameters;
@@ -49,6 +50,27 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 .limit(size)
                 .orderBy(isFull ? EVENT.id.asc() : EVENT.eventDate.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<EventEntity> findShortByArea(float lat, float lon, float dist, int from, int size) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        EntityGraph entityGraph = entityManager.getEntityGraph("short-event");
+        return queryFactory
+                .select(EVENT)
+                .from(EVENT)
+                .setHint("jakarta.persistence.loadgraph", entityGraph)
+                .where(inArea(lat, lon, dist),
+                        stateIn(List.of(EventStateEnum.PUBLISHED)))
+                .offset(from)
+                .limit(size)
+                .orderBy(EVENT.eventDate.asc())
+                .fetch();
+    }
+
+    private BooleanExpression inArea(float lat, float lon, float dist) {
+        return Expressions.booleanTemplate("distance({0}, {1}, {2}, {3}) <= {4}",
+                EVENT.location.lat, EVENT.location.lon, lat, lon, dist);
     }
 
     private BooleanExpression commonCondition(EventParameters parameters) {

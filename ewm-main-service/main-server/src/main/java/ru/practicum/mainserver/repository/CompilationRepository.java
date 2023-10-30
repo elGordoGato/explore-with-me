@@ -1,9 +1,13 @@
 package ru.practicum.mainserver.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.mainserver.repository.entity.CompilationEntity;
 
-public interface CompilationRepository extends JpaRepository<CompilationEntity, Long>,
-        QuerydslPredicateExecutor<CompilationEntity> {
+import java.util.Optional;
+
+public interface CompilationRepository extends JpaRepository<CompilationEntity, Long> {
+
+    @EntityGraph(value = "with-events")
+    Optional<CompilationEntity> findWithEventsById(Long compId);
 }

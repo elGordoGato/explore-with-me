@@ -1,11 +1,9 @@
 package ru.practicum.mainserver.service.impl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mainserver.api.dao.dto.CompilationDto;
@@ -17,6 +15,9 @@ import ru.practicum.mainserver.repository.entity.EventEntity;
 import ru.practicum.mainserver.repository.entity.QCompilationEntity;
 import ru.practicum.mainserver.service.CompilationService;
 
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
+    private static final QCompilationEntity COMPILATION = QCompilationEntity.compilationEntity;
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final CompilationMapper mapper;
     private final CompilationRepository repository;
 
@@ -66,7 +70,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationEntity get(Long compId) {
-        CompilationEntity compilation = repository.findById(compId)
+        CompilationEntity compilation = repository.findWithEventsById(compId)
                 .orElseThrow(() ->
                         new NotFoundException(CompilationEntity.class, compId));
         log.debug("Found compilation with id: {}{}", compId, compilation);
@@ -75,11 +79,20 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public List<CompilationEntity> get(Boolean pinned, Integer from, Integer size) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         BooleanExpression byPinned = (pinned != null) ?
                 QCompilationEntity.compilationEntity.pinned.eq(pinned) :
-                Expressions.TRUE.isTrue();
-        Pageable pageRequest = PageRequest.of(from / size, size);
-        List<CompilationEntity> foundCompilations = repository.findAll(byPinned, pageRequest).toList();
+                null;
+        EntityGraph entityGraph = entityManager.getEntityGraph("with-events");
+
+        List<CompilationEntity> foundCompilations = queryFactory
+                .select(COMPILATION)
+                .from(COMPILATION)
+                .setHint("jakarta.persistence.loadgraph", entityGraph)
+                .where(byPinned)
+                .offset(from)
+                .limit(size)
+                .fetch();
         log.debug("Found compilations with parameters: pinned - {}, from - {}, size - {}{}",
                 pinned, from, size, foundCompilations);
         return foundCompilations;

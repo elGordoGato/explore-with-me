@@ -33,4 +33,6 @@ public interface EventService {
     List<EventEntity> getByIds(List<Long> eventIds);
 
     EventEntity getByID(Long eventId);
+
+    List<EventEntity> findAllForArea(LocationEntity location, float radius, int from, int size);
 }

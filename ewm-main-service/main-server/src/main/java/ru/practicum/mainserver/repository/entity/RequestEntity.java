@@ -35,13 +35,12 @@ public class RequestEntity {
     @Override
     public String toString() {
 
-        String sb = "\nclass RequestEntity {\n" +
+        return "\nclass RequestEntity {\n" +
                 "    id: " + id + "\n" +
                 "    requester: " + requester.getId() + "\n" +
                 "    event: " + event.getId() + "\n" +
                 "    created: " + created + "\n" +
                 "    status: " + status + "\n" +
                 "}";
-        return sb;
     }
 }

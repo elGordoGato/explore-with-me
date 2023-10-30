@@ -25,12 +25,11 @@ public class UserEntity {
     @Override
     public String toString() {
 
-        String sb = "\nclass UserEntity {\n" +
+        return "\nclass UserEntity {\n" +
                 "    id: " + id + "\n" +
                 "    name: " + name + "\n" +
                 "    email: " + email + "\n" +
                 "}";
-        return sb;
     }
 
 }
