@@ -37,18 +37,13 @@ public class AreaServiceImpl implements AreaService {
         AreaEntity areaToBeUpdated = getById(areaId);
         Optional.ofNullable(body.getTitle())
                 .ifPresent(title -> {
-                    if (title.isBlank() || title.length() < 2 || 225 < title.length()) {
-                        throw new BadRequestException("Title length out of bounds: 2-225, or it is blank; title: " + title);
+                    if (title.isBlank()) {
+                        throw new BadRequestException("New title do not contain any characters; title: " + title);
                     }
                     areaToBeUpdated.setTitle(title);
                 });
         Optional.ofNullable(body.getRadius())
-                .ifPresent(radius -> {
-                    if (radius < 0L) {
-                        throw new BadRequestException("Radius must be positive: " + radius);
-                    }
-                    areaToBeUpdated.setRadius(radius);
-                });
+                .ifPresent(areaToBeUpdated::setRadius);
         Optional.ofNullable(location)
                 .ifPresent(areaToBeUpdated::setLocation);
         AreaEntity updatedArea = repository.save(areaToBeUpdated);

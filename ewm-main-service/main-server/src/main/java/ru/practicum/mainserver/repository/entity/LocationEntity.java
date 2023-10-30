@@ -41,11 +41,10 @@ public class LocationEntity {
     @Override
     public String toString() {
 
-        String sb = "\nclass LocationEntity {\n" +
+        return "\nclass LocationEntity {\n" +
                 "    id: " + id + "\n" +
                 "    latitude: " + lat + "\n" +
                 "    longitude: " + lon + "\n" +
                 "}";
-        return sb;
     }
 }

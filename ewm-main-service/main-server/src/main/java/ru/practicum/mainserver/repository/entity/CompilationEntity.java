@@ -36,12 +36,11 @@ public class CompilationEntity {
 
     @Override
     public String toString() {
-        String sb = "\nclass CompilationEntity {\n" +
+        return "\nclass CompilationEntity {\n" +
                 "    id: " + id + "\n" +
                 "    title: " + title + "\n" +
                 "    events: " + events.stream().map(EventEntity::getId).collect(Collectors.toList()) + "\n" +
                 "    pinned: " + pinned + "\n" +
                 "}";
-        return sb;
     }
 }

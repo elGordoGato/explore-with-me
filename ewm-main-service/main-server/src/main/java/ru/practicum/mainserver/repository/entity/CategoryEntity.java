@@ -23,10 +23,9 @@ public class CategoryEntity {
 
     @Override
     public String toString() {
-        String sb = "\nclass CategoryEntity {\n" +
+        return "\nclass CategoryEntity {\n" +
                 "    id: " + id + "\n" +
                 "    name: " + name + "\n" +
                 "}";
-        return sb;
     }
 }

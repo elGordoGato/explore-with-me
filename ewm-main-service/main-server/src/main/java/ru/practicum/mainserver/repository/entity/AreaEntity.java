@@ -36,12 +36,11 @@ public class AreaEntity {
     @Override
     public String toString() {
 
-        String sb = "\nclass AreaEntity {\n" +
+        return "\nclass AreaEntity {\n" +
                 "    id: " + (id) + "\n" +
                 "    title: " + (title) + "\n" +
                 "    location: " + (location.getId()) + "\n" +
                 "    radius: " + (radius) + "\n" +
                 "}";
-        return sb;
     }
 }
