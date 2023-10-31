@@ -106,7 +106,7 @@ Java, Spring Boot, SQL, PostgreSQL, JPA, Hibernate, Maven, Docker.
 перейдите в ваш Pull Request на платформе GitHub и нажмите кнопку `Merge pull request`.
 </details>
 
-### [Pull request на сервис статистики.](https://github.com/AlexeiRomanchenko/java-explore-with-me/pull/3)
+### [Pull request на сервис статистики.](https://github.com/elGordoGato/explore-with-me/pull/1)
 
 # Этап 2. Основной сервис
 <details> <summary> Техническое задание. Часть 2 </summary>  
@@ -138,7 +138,7 @@ Java, Spring Boot, SQL, PostgreSQL, JPA, Hibernate, Maven, Docker.
 Pull Request на платформе GitHub и нажать кнопку `Merge pull request`.
 </details>  
 
-### [Pull request на основной сервис](https://github.com/AlexeiRomanchenko/java-explore-with-me/pull/3)
+### [Pull request на основной сервис](https://github.com/elGordoGato/explore-with-me/pull/2)
 
 # Этап 3. Дополнительная функциональность
 <details> <summary> Техническое задание. Часть 3 </summary>  
@@ -203,4 +203,4 @@ Pull Request на платформе GitHub и нажать кнопку `Merge 
 
 </details>
 
-### [Pull request на доп. функциональность - "комментарии к событиям."](https://github.com/AlexeiRomanchenko/java-explore-with-me/pull/5)
+### [Pull request на доп. функциональность - "комментарии к событиям."](https://github.com/elGordoGato/explore-with-me/pull/3)
