@@ -5,7 +5,7 @@
 Приложение, которое создает афишу. В этой афише можно предложить какое-либо событие от выставки до похода в кино и собрать компанию для участия в нём.
 ![main front](img/front%20page.png)
 
-- Выбрана дополнительная функциональность - комментарии к событиям (comments).
+- Выбрана дополнительная функциональность - администрирование локаций (location-processing).
 ### Стек:
 Java, Spring Boot, SQL, PostgreSQL, JPA, Hibernate, Maven, Docker.
 
@@ -203,4 +203,4 @@ Pull Request на платформе GitHub и нажать кнопку `Merge 
 
 </details>
 
-### [Pull request на доп. функциональность - "комментарии к событиям."](https://github.com/elGordoGato/explore-with-me/pull/3)
+### [Pull request на доп. функциональность - "Администрирование локаций"](https://github.com/elGordoGato/explore-with-me/pull/3)
