@@ -100,7 +100,7 @@ Java 11, Spring Boot, PostgreSQL, JPA Hibernate, Lombok, Maven, Docker.
 ---
 
 ### Схема базы данных:
-<a href="https://dbdiagram.io/d/654275b07d8bbd64654a0018"><img src="img/er_diagram.png"></a>
+<a href="https://dbdiagram.io/d/Explore-With-Me-654275b07d8bbd64654a0018"><img src="img/er_diagram.png"></a>
 
 --- 
 
